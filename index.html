@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dossiers huisartsenpraktijken</title>
+<meta name="description" content="Overzicht van drie fictieve huisartsenpraktijken: visie, teamcompositie en patiëntenpopulatie.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --desk: #dfe5e8;
+    --desk-dark: #cdd6db;
+    --ink: #1c2a32;
+    --ink-soft: #4a5b65;
+    --paper: #fbfcfc;
+    --line: #c3cdd3;
+    --focus: #0b57d0;
+    --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    --text: "Source Serif 4", Georgia, "Times New Roman", serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --desk: #1a2329;
+      --desk-dark: #232f36;
+      --ink: #e8eef1;
+      --ink-soft: #a5b4bc;
+      --paper: #26333b;
+      --line: #3a4a54;
+      --focus: #8ab4f8;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--desk);
+    color: var(--ink);
+    font-family: var(--text);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+  }
+  h1, h2, h3 { font-family: var(--display); line-height: 1.15; margin: 0; letter-spacing: -0.01em; }
+  p { margin: 0 0 1em; max-width: 68ch; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+
+  /* ---------- Landingspagina ---------- */
+  .landing { max-width: 1100px; margin: 0 auto; padding: 4rem 1.5rem 5rem; }
+  .landing h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 700; max-width: 16ch; }
+  .landing .intro { margin-top: 1.25rem; color: var(--ink-soft); font-size: 1.15rem; max-width: 52ch; }
+
+  .cabinet {
+    margin-top: 4rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 3.5rem 2rem;
+  }
+
+  .folder {
+    --c: #2f6f73;
+    position: relative;
+    display: block;
+    text-decoration: none;
+    padding-top: 2.1rem;
+    isolation: isolate;
+  }
+  /* tabblad van de map */
+  .folder::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 46%; height: 2.6rem;
+    background: var(--c);
+    border-radius: 12px 12px 0 0;
+    clip-path: polygon(0 0, 86% 0, 100% 100%, 0 100%);
+    z-index: -1;
+  }
+  /* papier dat uit de map steekt */
+  .folder .sheet {
+    position: absolute;
+    left: 1rem; right: 1rem; top: 1.2rem;
+    height: 5rem;
+    background: var(--paper);
+    border-radius: 6px 6px 0 0;
+    border: 1px solid var(--line);
+    transition: transform .25s ease;
+    z-index: -1;
+  }
+  .folder .body {
+    position: relative;
+    background: var(--c);
+    color: #fff;
+    border-radius: 0 12px 12px 12px;
+    padding: 1.6rem 1.5rem 1.4rem;
+    min-height: 15rem;
+    display: flex; flex-direction: column; justify-content: space-between;
+    box-shadow: 0 1px 0 rgba(255,255,255,.18) inset, 0 14px 22px -14px rgba(10, 25, 35, .55);
+    transition: transform .25s ease;
+  }
+  .folder .label {
+    background: #fff;
+    color: #1c2a32;
+    border-radius: 4px;
+    padding: .8rem 1rem;
+  }
+  .folder .label h2 { font-size: 1.35rem; font-weight: 700; }
+  .folder .label span { display: block; margin-top: .3rem; font-size: .95rem; color: #4a5b65; line-height: 1.4; }
+  .folder .open { font-family: var(--display); font-weight: 500; font-size: 1rem; margin-top: 1.5rem; }
+  .folder:hover .sheet, .folder:focus-visible .sheet { transform: translateY(-1.1rem); }
+  .folder:hover .body, .folder:focus-visible .body { transform: translateY(.2rem); }
+
+  .f-linde  { --c: #2f6f73; }
+  .f-beuk   { --c: #7a3e65; }
+  .f-scheld { --c: #a8741f; }
+
+  /* ---------- Dossierweergave ---------- */
+  .dossier { display: grid; grid-template-columns: 290px 1fr; min-height: 100vh; }
+  .side {
+    background: var(--c);
+    color: #fff;
+    padding: 2rem 1.5rem;
+    display: flex; flex-direction: column; gap: 2rem;
+  }
+  .back {
+    font-family: var(--display); font-size: .95rem; font-weight: 500;
+    color: #fff; text-decoration: none; opacity: .9; width: fit-content;
+  }
+  .back:hover { text-decoration: underline; }
+  .side h1 { font-size: 1.6rem; font-weight: 700; }
+  .side .tagline { margin: .6rem 0 0; font-size: .98rem; opacity: .9; line-height: 1.45; }
+  .topics { display: flex; flex-direction: column; gap: .35rem; margin: 0; padding: 0; list-style: none; }
+  .topics a {
+    display: block;
+    padding: .7rem .9rem;
+    border-radius: 8px;
+    font-family: var(--display); font-weight: 500; font-size: 1.05rem;
+    color: #fff; text-decoration: none;
+    border-left: 4px solid transparent;
+  }
+  .topics a:hover { background: rgba(255,255,255,.14); }
+  .topics a[aria-current="page"] { background: #fff; color: #1c2a32; border-left-color: rgba(0,0,0,.25); }
+  .side :focus-visible { outline-color: #fff; }
+
+  .main { padding: 3rem clamp(1.5rem, 5vw, 4.5rem) 5rem; }
+  .main-inner { max-width: 760px; }
+  .main h2 { font-size: clamp(1.8rem, 3.5vw, 2.5rem); font-weight: 700; margin-bottom: 1.5rem; }
+  .main h2:focus { outline: none; }
+  .lead { font-size: 1.25rem; line-height: 1.55; }
+
+  /* team */
+  .team { display: grid; gap: .9rem; margin: 0; padding: 0; list-style: none; }
+  .member { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 1rem 1.1rem; }
+  .mtop { display: grid; grid-template-columns: 3.2rem 1fr auto; gap: 1rem; align-items: center; }
+  .member .mdesc { margin: .85rem 0 0; }
+  .agenda { margin-top: .9rem; border-top: 1px solid var(--line); }
+  .agenda > summary {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: .7rem 0 .3rem; font-family: var(--display); font-weight: 500; font-size: .98rem; color: var(--c);
+  }
+  .agenda > summary:hover { text-decoration: underline; }
+  .avatar {
+    width: 3.2rem; height: 3.2rem; border-radius: 50%;
+    background: var(--c); color: #fff;
+    display: grid; place-items: center;
+    font-family: var(--display); font-weight: 700; font-size: 1.05rem;
+  }
+  .member h3 { font-size: 1.1rem; margin: 0; }
+  .member .role { color: var(--ink-soft); font-size: .95rem; margin: .1rem 0 0; }
+  .member p { margin: 0; font-size: 1rem; }
+
+  /* populatie */
+  .total { display: flex; align-items: baseline; gap: .8rem; flex-wrap: wrap; margin-bottom: 2rem; }
+  .total strong { font-family: var(--display); font-size: clamp(2.6rem, 6vw, 4rem); line-height: 1; color: var(--c); }
+  .total span { color: var(--ink-soft); }
+  /* uitklapbare secties */
+  details > summary { list-style: none; cursor: pointer; }
+  details > summary::-webkit-details-marker { display: none; }
+  .chev {
+    width: .55rem; height: .55rem; justify-self: end; flex: none;
+    border-right: 2px solid var(--ink-soft); border-bottom: 2px solid var(--ink-soft);
+    transform: rotate(-45deg); transition: transform .2s ease;
+  }
+  details[open] > summary .chev { transform: rotate(45deg); }
+  .toolbar { display: flex; gap: .6rem; margin: 0 0 1rem; }
+  .toolbar button {
+    font: inherit; font-family: var(--display); font-size: .92rem; font-weight: 500;
+    color: var(--ink); background: var(--paper); border: 1px solid var(--line);
+    border-radius: 99px; padding: .35rem .9rem; cursor: pointer;
+  }
+  .toolbar button:hover { border-color: var(--c); }
+  .accs { border-top: 1px solid var(--line); }
+  .acc { border-bottom: 1px solid var(--line); }
+  .acc > summary { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .95rem .2rem; }
+  .acc > summary:hover { background: color-mix(in srgb, var(--c) 7%, transparent); }
+  .acc > summary h3 { font-size: 1.2rem; margin: 0; }
+  .acc-body { padding: .2rem .2rem 1.5rem; }
+  .acc.nested { border-bottom: 1px solid var(--line); }
+  .acc.nested:last-child { border-bottom: 0; }
+  .acc.nested > summary { padding: .7rem 0; }
+  .acc.nested > summary h4 { font-family: var(--display); font-size: 1.05rem; margin: 0; color: var(--c); }
+  .acc.nested > .acc-body { padding: .1rem 0 1rem; }
+  .bars { display: grid; gap: .6rem; margin: 0; padding: 0; list-style: none; }
+  .bars li { display: grid; grid-template-columns: 6.5rem 1fr 3rem; gap: .8rem; align-items: center; font-size: .98rem; }
+  .bars .track { height: .9rem; background: var(--desk-dark); border-radius: 99px; overflow: hidden; }
+  .bars .fill { height: 100%; background: var(--c); border-radius: 99px; }
+  .bars .pct { text-align: right; font-variant-numeric: tabular-nums; }
+  .traits { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; }
+  .traits li { border-left: 4px solid var(--c); padding: .1rem 0 .1rem 1rem; }
+  .traits strong { font-family: var(--display); display: block; font-size: 1.05rem; }
+  .traits span { color: var(--ink-soft); }
+
+
+  /* cijfers uit het dossier */
+  .muted { color: var(--ink-soft); font-size: .98rem; }
+  .ind { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+  .ind li {
+    display: grid; grid-template-columns: 1fr 4.6rem 4.6rem; gap: .8rem; align-items: baseline;
+    padding: .7rem 0; border-bottom: 1px solid var(--line);
+  }
+  .ind li.ind-head { padding: .35rem 0; font-size: .88rem; color: var(--ink-soft); }
+  .ind small { display: block; color: var(--ink-soft); font-size: .88rem; line-height: 1.4; }
+  .ind .num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--display); font-weight: 500; }
+  .ind li.ind-head .num { font-weight: 400; }
+
+
+
+  /* praktijkrooster per dag */
+  .tabs { display: flex; flex-wrap: wrap; gap: .4rem; margin: .2rem 0 1rem; }
+  .tabs button {
+    font: inherit; font-family: var(--display); font-weight: 500; font-size: .98rem;
+    color: var(--ink); background: var(--paper); border: 1px solid var(--line);
+    border-radius: 99px; padding: .45rem 1.05rem; cursor: pointer;
+  }
+  .tabs button:hover { border-color: var(--c); }
+  .tabs button[aria-selected="true"] { background: var(--c); border-color: var(--c); color: #fff; }
+  .tl-scroll { overflow-x: auto; padding-bottom: .4rem; }
+  .timeline { min-width: 640px; padding-right: 1rem; }
+  .trow { display: grid; grid-template-columns: 10rem 1fr; gap: .8rem; align-items: center; padding: .3rem 0; border-bottom: 1px solid var(--line); }
+  .trow.axis { border-bottom: 0; padding-bottom: 0; }
+  .tname strong { display: block; font-family: var(--display); font-size: .88rem; line-height: 1.2; }
+  .tname span { display: block; color: var(--ink-soft); font-size: .76rem; line-height: 1.25; }
+  .track {
+    position: relative; height: 2.5rem;
+    background-image: repeating-linear-gradient(to right, var(--line) 0, var(--line) 1px, transparent 1px, transparent 10%);
+  }
+  .axis .track { height: 1.2rem; background: none; }
+  .axis .track span { position: absolute; transform: translateX(-50%); font-size: .75rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .tb {
+    --bc: #7b8794;
+    position: absolute; top: .2rem; bottom: .2rem;
+    display: flex; align-items: center;
+    border-left: 3px solid var(--bc); border-radius: 3px;
+    background: rgba(128, 128, 128, .18);
+    background: color-mix(in srgb, var(--bc) 24%, var(--paper));
+    padding: .1rem .3rem; font-size: .72rem; line-height: 1.2;
+    overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  }
+  .tb.t-pauze { background: repeating-linear-gradient(135deg, transparent 0 4px, var(--line) 4px 5px); border-left-style: dashed; color: var(--ink-soft); }
+  .tl-off { position: absolute; left: .5rem; top: 50%; transform: translateY(-50%); font-size: .8rem; font-style: italic; color: var(--ink-soft); }
+  .daynote { margin: .8rem 0 0; font-size: .92rem; color: var(--ink-soft); }
+  .err { padding: 2rem 1.5rem; max-width: 40rem; }
+  .folder { touch-action: manipulation; }
+
+  /* weekrooster */
+  .main-inner.wide { max-width: 1000px; }
+  .mbody { min-width: 0; }
+  .mhead { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; align-items: flex-start; }
+  .hours { text-align: right; font-family: var(--display); }
+  .hours strong { display: block; font-size: 1.05rem; }
+  .hours span { color: var(--ink-soft); font-size: .92rem; }
+  .split, .extern { margin: .7rem 0 0; font-size: .92rem; color: var(--ink-soft); }
+  .week { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .5rem; margin-top: .9rem; }
+  .day { min-width: 0; }
+  .dayname { font-family: var(--display); font-size: .82rem; font-weight: 500; color: var(--ink-soft); margin-bottom: .25rem; }
+  .blocks { display: flex; flex-direction: column; gap: .25rem; }
+  .off { font-size: .82rem; font-style: italic; color: var(--ink-soft); padding: .25rem 0; }
+  .blk {
+    --bc: #7b8794;
+    border-left: 4px solid var(--bc);
+    background: rgba(128, 128, 128, .12);
+    background: color-mix(in srgb, var(--bc) 17%, transparent);
+    border-radius: 4px; padding: .25rem .5rem; font-size: .8rem; line-height: 1.3;
+  }
+  .blk .tm { display: block; font-family: var(--display); font-weight: 500; font-variant-numeric: tabular-nums; }
+  .blk .lb { display: block; color: var(--ink-soft); }
+  .t-consult { --bc: #3b82c4; } .t-tele { --bc: #8b6fd6; } .t-huisbezoek { --bc: #3f9e6a; }
+  .t-admin { --bc: #c99a2e; } .t-project { --bc: #cc4f86; } .t-overleg { --bc: #2a9a9a; }
+  .t-opleiding { --bc: #d9742c; } .t-supervisie { --bc: #a0522d; } .t-onthaal { --bc: #7b8794; }
+  .t-pauze { background: transparent; border-left: 4px dashed var(--line); }
+  .legend { display: flex; flex-wrap: wrap; gap: .4rem; margin: .6rem 0 1.4rem; }
+  .legend .blk { padding: .2rem .6rem; }
+  @media (max-width: 1150px) {
+    .week { grid-template-columns: 1fr; gap: .6rem; }
+    .day { display: grid; grid-template-columns: 2rem 1fr; gap: .5rem; align-items: start; }
+    .dayname { margin: .3rem 0 0; }
+    .blocks { flex-direction: row; flex-wrap: wrap; }
+    .blk { min-width: 7.5rem; }
+  }
+
+
+  /* werkblad */
+  .btn {
+    font: inherit; font-family: var(--display); font-weight: 500; font-size: .92rem;
+    color: #fff; background: var(--c); border: 1px solid var(--c);
+    border-radius: 99px; padding: .4rem 1.1rem; cursor: pointer;
+  }
+  .btn.secondary { color: var(--ink); background: var(--paper); border-color: var(--line); }
+  .btn.secondary:hover { border-color: var(--c); }
+  .btn[hidden], .wb-note[hidden], .wb-bar[hidden] { display: none; }
+  .wb-bar { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: .8rem 1rem; margin: 0 0 1.2rem; }
+  .wb-bar input { font: inherit; padding: .4rem .6rem; border: 1px solid var(--line); border-radius: 8px; background: var(--desk); color: var(--ink); max-width: 100%; }
+  .wb-note { border-left: 4px solid #c99a2e; background: rgba(201, 154, 46, .15); padding: .7rem 1rem; border-radius: 6px; margin: 0 0 1rem; }
+  .wb-note.err { border-left-color: #c0392b; background: rgba(192, 57, 43, .13); }
+  .wb-card { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 1rem 1.1rem; margin: 0 0 1rem; }
+  .wb-card h3, .wb-card h4 { font-size: 1.1rem; margin: 0 0 .2rem; }
+  .wb-card h4 { font-family: var(--display); line-height: 1.3; }
+  .wb-kop { font-size: 1.35rem; color: var(--c); margin: 2rem 0 .8rem; padding-bottom: .35rem; border-bottom: 1px solid var(--line); }
+  .wb-card .muted { margin: 0 0 .7rem; }
+  .wb-card textarea {
+    display: block; width: 100%; min-height: 7rem; resize: vertical;
+    font: inherit; line-height: 1.5; color: var(--ink);
+    background: var(--desk); border: 1px solid var(--line); border-radius: 8px; padding: .6rem .7rem;
+  }
+  .wb-card textarea:not([readonly]) { background: var(--paper); border-color: var(--c); }
+  .wb-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem .9rem; margin-top: .6rem; font-size: .9rem; color: var(--ink-soft); }
+  .wb-msg { font-weight: 500; }
+  .ref { margin-top: .8rem; border-top: 1px dashed var(--line); padding-top: .5rem; }
+  .ref summary { cursor: pointer; font-family: var(--display); font-weight: 500; color: var(--c); }
+  .ref p { margin: .5rem 0 0; }
+
+  @media (max-width: 800px) {
+    .dossier { grid-template-columns: 1fr; min-height: 0; }
+    .side { padding: 1.25rem 1.25rem 1rem; gap: 1.1rem; }
+    .topics { flex-direction: row; flex-wrap: wrap; }
+    .topics a { padding: .55rem .85rem; font-size: 1rem; }
+    .main { padding-top: 2rem; }
+    .bars li { grid-template-columns: 5.5rem 1fr 2.8rem; }
+    .mtop { grid-template-columns: 3.2rem 1fr; gap: .2rem 1rem; }
+    .mtop .avatar { grid-row: 1 / 3; }
+    .mtop .hours { grid-column: 2; text-align: left; }
+    .mtop .hours strong, .mtop .hours span { display: inline; font-size: .92rem; }
+    .mtop .hours span::before { content: " · "; }
+    .trow { grid-template-columns: 6.8rem 1fr; gap: .5rem; }
+    .ind li { grid-template-columns: 1fr 3.8rem 3.8rem; gap: .5rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .folder .sheet, .folder .body { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* =====================================================================
+   INHOUD – hier pas je de teksten aan.
+   Elke praktijk heeft: id, naam, tagline, kleurklasse, en de drie onderwerpen.
+   ===================================================================== */
+/* Hulpfuncties voor het weekrooster: T(type, van, tot, label?) is één blok in de dag. */
+const T = (type, van, tot, label) => ({ type, van, tot, label });
+const P = T("pauze", "12:30", "13:30");   // middagpauze (standaard 12:30 – 13:30)
+const P12 = T("pauze", "12:00", "13:00"); // middagpauze 12:00 – 13:00
+
+/* Hulpfunctie voor de cijfers uit het dossier: n = aantal, pct = aandeel, noemer = waarvan dat aandeel is berekend */
+const R = (label, n, pct, noemer) => ({ label, n, pct, noemer });
+
+const PRACTICES = [
+  {
+    id: "de-linde",
+    cls: "f-linde",
+    naam: "Huisartsenpraktijk De Linde",
+    tagline: "Groepspraktijk met drie huisartsen in een vergrijzende kleine stad.",
+    visie: [
+      "De Linde is een groepspraktijk met drie huisartsen in een kleine, vergrijzende stad. Veel patiënten komen al jaren bij ons. We vinden het belangrijk dat zij zich gekend voelen en dat de zorg samenhangt, ook als ze niet altijd dezelfde arts zien.",
+      "Het elektronisch patiëntendossier is onze rode draad. Wat we daarin vastleggen, bepaalt wie een herinnering krijgt, welke jaarcontroles gepland worden en hoe collega's elkaar kunnen opvolgen.",
+      "In de praktijk codeert elke arts op zijn eigen manier. Een diagnose wordt soms in de vrije tekst genoteerd in plaats van als gecodeerde diagnose in de probleemlijst. Dat merken we vooral bij patiënten die door verschillende artsen gezien worden.",
+      "De Linde is een opleidingspraktijk. Sara is onze HAIO in haar eerste jaar en ziet patiënten bij alle drie de artsen. Dr. Verbeke is haar praktijkopleider; elke vrijdagnamiddag is een uur supervisie ingepland.",
+      "Dit kwaliteitsjaar willen we kiezen voor één onderwerp waarvoor we onze werkwijze in het team gelijktrekken. Daarvoor kijken we naar de registratie- en procescijfers van onze eigen praktijk."
+    ],
+    team: [
+      { naam: "Dr. Annelies Verbeke", rol: "Huisarts, medeoprichter en praktijkopleider", tekst: "Medeoprichter van de praktijk en al meer dan twintig jaar huisarts in de stad. Ze is erkend praktijkopleider en begeleidt Sara. Ze heeft een bijzondere interesse in chronische zorg en preventie en codeert diagnoses consequent in de probleemlijst.",
+        rooster: {
+          ma: [T("consult","08:30","12:30"), P, T("consult","13:30","17:30")],
+          di: [T("consult","08:30","12:30"), P, T("consult","13:30","17:30")],
+          wo: [T("consult","08:30","12:30"), P, T("consult","13:30","17:30")],
+          do: [T("consult","08:30","12:30"), T("overleg","12:30","13:30","Teamoverleg"), T("huisbezoek","13:30","16:30")],
+          vr: [T("consult","08:30","12:30"), P, T("consult","13:30","14:30"), T("supervisie","14:30","15:30","Supervisie HAIO")]
+        } },
+      { naam: "Dr. Tom Claessens", rol: "Huisarts", tekst: "Werkt sinds twaalf jaar in de praktijk. Hij legt zich toe op ouderenzorg en palliatieve zorg en doet veel huisbezoeken. Diagnoses noteert hij meestal in de vrije tekst van het consult.",
+        rooster: {
+          ma: [T("consult","08:30","12:30"), P, T("consult","13:30","17:30")],
+          di: [T("consult","08:30","12:30"), P, T("huisbezoek","13:30","16:30")],
+          do: [T("consult","08:30","12:30"), T("overleg","12:30","13:30","Teamoverleg"), T("consult","13:30","16:30")],
+          vr: [T("consult","08:30","12:30"), P, T("huisbezoek","13:30","16:30")]
+        } },
+      { naam: "Dr. Sara Maes", rol: "Huisarts in opleiding (HAIO), 1e jaar", tekst: "Huisarts in opleiding, nu in haar eerste jaar bij De Linde. Op dinsdag volgt ze onderwijs aan de universiteit en is ze niet op de praktijk. Ze wordt begeleid door Dr. Verbeke, met wie ze elke vrijdagnamiddag supervisie heeft. Ze merkte op dat collega's diagnoses op verschillende manieren coderen.",
+        rooster: {
+          ma: [T("consult","08:30","12:30"), P, T("consult","13:30","17:30")],
+          di: [T("opleiding","08:30","12:30","Opleidingsdag (universiteit)"), P, T("opleiding","13:30","17:30","Opleidingsdag (universiteit)")],
+          wo: [T("consult","08:30","12:30"), P, T("consult","13:30","17:30")],
+          do: [T("consult","08:30","12:30"), T("overleg","12:30","13:30","Teamoverleg"), T("consult","13:30","16:30")],
+          vr: [T("consult","08:30","12:30"), P, T("consult","13:30","14:30"), T("supervisie","14:30","15:30")]
+        } },
+      { naam: "Els Peeters", rol: "Praktijkverpleegkundige", tekst: "Praktijkverpleegkundige met een opleiding diabeteseducatie. Ze houdt consultaties voor chronische patiënten en doet technische handelingen. Haar agenda wordt gevuld op verwijzing van de huisarts, er is geen vaste oproeplijst.",
+        rooster: {
+          ma: [T("consult","08:30","12:30","Verpleegkundig consult"), P, T("consult","13:30","16:30","Verpleegkundig consult")],
+          di: [T("consult","08:30","12:30","Verpleegkundig consult"), P, T("consult","13:30","17:30","Verpleegkundig consult")],
+          wo: [T("consult","08:30","12:30","Verpleegkundig consult"), P, T("consult","13:30","16:30","Verpleegkundig consult")],
+          do: [T("consult","08:30","12:30","Chronische zorg"), T("overleg","12:30","13:30","Teamoverleg"), T("consult","13:30","16:30","Verpleegkundig consult")]
+        } },
+      { naam: "Karolien Wouters", rol: "Praktijkassistente", tekst: "Praktijkassistente en eerste aanspreekpunt aan het onthaal en aan de telefoon. Ze plant afspraken in, maar werkt niet met vaste herinneringen voor jaarcontroles.",
+        rooster: {
+          ma: [T("onthaal","08:00","12:30","Onthaal en telefoon"), P, T("onthaal","13:30","16:00","Onthaal en telefoon")],
+          di: [T("onthaal","08:00","12:30","Onthaal en telefoon"), P, T("onthaal","13:30","16:00","Onthaal en telefoon")],
+          do: [T("onthaal","08:00","12:30","Onthaal en telefoon"), P, T("onthaal","13:30","16:00","Onthaal en telefoon")],
+          vr: [T("onthaal","08:00","12:30","Onthaal en telefoon"), P, T("onthaal","13:30","16:00","Onthaal en telefoon")]
+        } }
+    ],
+    populatie: {
+      totaal: 4200,
+      leeftijd: [
+        { label: "0 – 17 jaar", pct: 16 },
+        { label: "18 – 44 jaar", pct: 28 },
+        { label: "45 – 64 jaar", pct: 27 },
+        { label: "65 – 79 jaar", pct: 20 },
+        { label: "80+ jaar", pct: 9 }
+      ],
+      kenmerken: [
+        { titel: "Vergrijzende stad", tekst: "Bijna 30% van de patiënten is 65 jaar of ouder." },
+        { titel: "Vaste patiënten", tekst: "Het merendeel is al meer dan tien jaar ingeschreven in de praktijk." },
+        { titel: "Drie artsen, één dossier", tekst: "Patiënten wisselen regelmatig van arts, vooral bij afwezigheid of tijdens de wachtdienst." }
+      ],
+      indicatoren: [
+        { groep: "Diabetes", rijen: [
+          R("Patiënten met diagnose diabetes in het dossier", 290, 6.9, "van alle patiënten"),
+          R("Patiënten bij wie ooit een verhoogde glycemie of HbA1c gemeten is", 415, 9.9, "van alle patiënten"),
+          R("Patiënten met diabetes bij wie het afgelopen jaar een HbA1c bepaald is", 235, 81, "van de patiënten met diagnose diabetes")
+        ]},
+        { groep: "Nierfunctie", rijen: [
+          R("Patiënten met chronische nierinsufficiëntie (CNI) als diagnose in het dossier", 95, 2.3, "van alle patiënten"),
+          R("Patiënten met minstens twee eGFR-metingen onder 60, drie maanden uit elkaar", 105, 2.5, "van alle patiënten"),
+          R("Patiënten met een eGFR onder 60 bij wie een albumine/creatinine-ratio bepaald is", 78, 74, "van de patiënten met eGFR onder 60")
+        ]},
+        { groep: "Cardiovasculair risico bij 40- tot 69-jarigen", rijen: [
+          R("Bloeddruk gemeten in de laatste 5 jaar", 1452, 88, "van de 40- tot 69-jarigen (1.650)"),
+          R("Cholesterol bepaald in de laatste 5 jaar", 1304, 79, "van de 40- tot 69-jarigen"),
+          R("Rookstatus geregistreerd", 1386, 84, "van de 40- tot 69-jarigen"),
+          R("Cardiovasculair risico berekend en geregistreerd", 1089, 66, "van de 40- tot 69-jarigen")
+        ]}
+      ]
+    }
+  },
+  {
+    id: "de-beuk",
+    cls: "f-beuk",
+    naam: "Praktijk De Beuk",
+    tagline: "Groepspraktijk met twee huisartsen in een landelijke gemeente, met een oudere patiëntengroep.",
+    visie: [
+      "Praktijk De Beuk is een groepspraktijk met twee huisartsen in een landelijke gemeente. We zijn er voor het hele gezin, maar onze patiëntengroep wordt snel ouder en veel patiënten gebruiken meerdere geneesmiddelen tegelijk.",
+      "We werken samen met de specialisten van het regionale ziekenhuis, zodat medicatie en opvolging op elkaar afgestemd blijven.",
+      "Laboresultaten komen elektronisch binnen en worden door de arts bekeken. Of een afwijkende uitslag ook leidt tot een diagnose, een nieuwe afspraak of een aanpassing van de medicatie, hangt vandaag af van wie de uitslag opent. Daar zijn geen vaste afspraken voor.",
+      "Dr. Lotte Hermans is onze HAIO in haar derde jaar. Ze werkt grotendeels zelfstandig en Dr. Vermeulen is haar praktijkopleider. Supervisie gebeurt wanneer het uitkomt; een vast moment staat niet in de agenda.",
+      "Dit kwaliteitsjaar willen we kiezen voor één onderwerp waarvoor we onze werkwijze in het team gelijktrekken. Daarvoor kijken we naar de registratie- en procescijfers van onze eigen praktijk."
+    ],
+    team: [
+      { naam: "Dr. Marc Vermeulen", rol: "Huisarts, praktijkverantwoordelijke en praktijkopleider", tekst: "Praktijkverantwoordelijke en al vijftien jaar huisarts in de gemeente. Hij is praktijkopleider van Lotte. Hij legt zich toe op ouderenzorg en opent de labouitslagen van zijn eigen patiënten zelf, tussen de consultaties door.",
+        rooster: {
+          ma: [T("tele","08:00","09:00","Telefonisch spreekuur"), T("consult","09:00","12:00"), P12, T("consult","13:00","17:00")],
+          di: [T("tele","08:00","09:00","Telefonisch spreekuur"), T("consult","09:00","12:00"), P12, T("consult","13:00","17:00")],
+          wo: [T("huisbezoek","08:30","12:30"), P, T("consult","13:30","16:30")],
+          do: [T("tele","08:00","09:00","Telefonisch spreekuur"), T("consult","09:00","12:00"), P12, T("consult","13:00","17:00")],
+          vr: [T("tele","08:00","09:00","Telefonisch spreekuur"), T("consult","09:00","12:00"), P12, T("huisbezoek","13:00","16:00")]
+        } },
+      { naam: "Dr. Joris Vandamme", rol: "Huisarts, kwaliteitsverantwoordelijke", tekst: "Huisarts en kwaliteitsverantwoordelijke van de praktijk. Hij organiseert de kwaliteitsrondes en analyseert het dossier. Hij heeft wekelijks tijd voor dossierverwerking en kwaliteitswerk.",
+        rooster: {
+          ma: [T("tele","08:00","09:00","Telefonisch spreekuur"), T("consult","09:00","12:00"), P12, T("admin","13:00","15:00","Dossierverwerking en labo"), T("consult","15:00","17:00")],
+          di: [T("consult","09:00","12:00")],
+          wo: [T("project","08:30","12:30","Kwaliteitswerk"), P, T("consult","13:30","16:30")],
+          do: [T("tele","08:00","09:00","Telefonisch spreekuur"), T("consult","09:00","12:00"), P12, T("consult","13:00","17:00")],
+          vr: [T("tele","08:00","09:00","Telefonisch spreekuur"), T("consult","09:00","12:00"), P12, T("admin","13:00","15:00","Dossierverwerking en labo")]
+        } },
+      { naam: "Dr. Lotte Hermans", rol: "Huisarts in opleiding (HAIO), 3e jaar", tekst: "Huisarts in opleiding in haar derde jaar. Op dinsdag volgt ze onderwijs aan de universiteit en is ze niet op de praktijk. Ze werkt grotendeels zelfstandig. Dr. Vermeulen is haar praktijkopleider; een vast supervisiemoment staat niet in de agenda.",
+        rooster: {
+          ma: [T("consult","08:30","12:30"), P, T("consult","13:30","17:30")],
+          di: [T("opleiding","08:30","12:30","Opleidingsdag (universiteit)"), P, T("opleiding","13:30","17:30","Opleidingsdag (universiteit)")],
+          wo: [T("consult","08:30","12:30"), P, T("consult","13:30","17:30")],
+          do: [T("consult","08:30","12:30"), P, T("consult","13:30","17:30")],
+          vr: [T("consult","08:30","12:30"), P, T("consult","13:30","15:30")]
+        } },
+      { naam: "Lien De Smet", rol: "Praktijkverpleegkundige", tekst: "Praktijkverpleegkundige die de bloeddruk meet en chronische patiënten opvolgt in consultaties. Ze bekijkt labouitslagen alleen wanneer een arts erom vraagt.",
+        rooster: {
+          ma: [T("consult","08:30","12:30","Verpleegkundig consult"), P, T("consult","13:30","17:30","Verpleegkundig consult")],
+          di: [T("consult","08:30","12:30","Verpleegkundig consult"), P, T("consult","13:30","17:30","Verpleegkundig consult")],
+          do: [T("consult","08:30","12:30","Verpleegkundig consult"), P, T("consult","13:30","17:30","Verpleegkundig consult")]
+        } },
+      { naam: "Fien Janssens", rol: "Administratief medewerker", tekst: "Administratief medewerker aan het onthaal en verantwoordelijk voor het dossierbeheer. Ze scant verslagen in en registreert uitslagen, maar codeert zelf geen diagnoses.",
+        rooster: {
+          ma: [T("onthaal","08:00","12:00","Onthaal en telefoon"), P12, T("admin","13:00","16:00","Dossierbeheer")],
+          di: [T("onthaal","08:00","12:00","Onthaal en telefoon"), P12, T("admin","13:00","16:00","Dossierbeheer")],
+          do: [T("onthaal","08:00","12:00","Onthaal en telefoon"), P12, T("admin","13:00","16:00","Dossierbeheer")],
+          vr: [T("onthaal","08:00","12:00","Onthaal en telefoon"), P12, T("admin","13:00","16:00","Dossierbeheer")]
+        } }
+    ],
+    populatie: {
+      totaal: 3100,
+      leeftijd: [
+        { label: "0 – 17 jaar", pct: 15 },
+        { label: "18 – 44 jaar", pct: 23 },
+        { label: "45 – 64 jaar", pct: 29 },
+        { label: "65 – 79 jaar", pct: 24 },
+        { label: "80+ jaar", pct: 9 }
+      ],
+      kenmerken: [
+        { titel: "Landelijk en verspreid", tekst: "Veel patiënten wonen op enkele kilometers van de praktijk. Huisbezoeken en telefonische contacten nemen veel tijd in." },
+        { titel: "Polyfarmacie", tekst: "Eén op de vijf patiënten gebruikt vijf of meer geneesmiddelen." },
+        { titel: "Alle uitslagen elektronisch", tekst: "Labouitslagen komen rechtstreeks in het dossier binnen." }
+      ],
+      indicatoren: [
+        { groep: "Diabetes", rijen: [
+          R("Patiënten met diagnose diabetes in het dossier", 330, 10.6, "van alle patiënten"),
+          R("Patiënten bij wie ooit een verhoogde glycemie of HbA1c gemeten is", 342, 11.0, "van alle patiënten"),
+          R("Patiënten met diabetes bij wie het afgelopen jaar een HbA1c bepaald is", 277, 84, "van de patiënten met diagnose diabetes")
+        ]},
+        { groep: "Nierfunctie", rijen: [
+          R("Patiënten met chronische nierinsufficiëntie (CNI) als diagnose in het dossier", 75, 2.4, "van alle patiënten"),
+          R("Patiënten met minstens twee eGFR-metingen onder 60, drie maanden uit elkaar", 190, 6.1, "van alle patiënten"),
+          R("Patiënten met een eGFR onder 60 bij wie een albumine/creatinine-ratio bepaald is", 49, 26, "van de patiënten met eGFR onder 60")
+        ]},
+        { groep: "Cardiovasculair risico bij 40- tot 69-jarigen", rijen: [
+          R("Bloeddruk gemeten in de laatste 5 jaar", 1148, 85, "van de 40- tot 69-jarigen (1.350)"),
+          R("Cholesterol bepaald in de laatste 5 jaar", 1026, 76, "van de 40- tot 69-jarigen"),
+          R("Rookstatus geregistreerd", 1080, 80, "van de 40- tot 69-jarigen"),
+          R("Cardiovasculair risico berekend en geregistreerd", 837, 62, "van de 40- tot 69-jarigen")
+        ]}
+      ]
+    }
+  },
+  {
+    id: "scheldezicht",
+    cls: "f-scheld",
+    naam: "Medisch Centrum Scheldezicht",
+    tagline: "Multidisciplinair centrum in een stedelijke buurt met een jonge, diverse patiëntengroep.",
+    visie: [
+      "Medisch Centrum Scheldezicht is een multidisciplinair centrum waar huisartsen, verpleegkundigen, een maatschappelijk werker en een diëtiste onder één dak werken. Zo kunnen we complexe zorgvragen samen aanpakken.",
+      "Veel patiënten tussen 40 en 65 jaar komen pas langs als ze klachten hebben. Preventieve consultaties zijn zeldzaam, en wie toevallig voor iets anders langskomt, krijgt niet altijd een basismeting.",
+      "In ons dossier is er geen vaste plaats waar een risicoschatting wordt vastgelegd. Er is ook geen afspraak over wie metingen uitvoert, wie de uitslag interpreteert en wie de patiënt daarna opvolgt.",
+      "Het centrum begeleidt twee HAIO's: Dr. Elise Wuyts (2e jaar, praktijkopleider Dr. Benali) en Dr. Bram Declercq (1e jaar, praktijkopleider Dr. Lambrechts). Elk koppel heeft donderdagnamiddag supervisie.",
+      "Dit kwaliteitsjaar willen we kiezen voor één onderwerp waarvoor we onze werkwijze in het team gelijktrekken. Daarvoor kijken we naar de registratie- en procescijfers van onze eigen praktijk."
+    ],
+    team: [
+      { naam: "Dr. Pieter Hendrickx", rol: "Huisarts, medisch coördinator", tekst: "Medisch coördinator van het centrum en huisarts met een bijzondere interesse in rookstop en verslavingszorg. Hij combineert consultaties met coördinatietijd en leidt het teamoverleg.",
+        rooster: {
+          ma: [T("consult","08:30","12:30"), P, T("consult","13:30","16:30"), T("admin","16:30","17:30","Administratie")],
+          di: [T("tele","08:30","10:00"), T("consult","10:00","12:30"), P, T("project","13:30","17:30","Coördinatie")],
+          wo: [T("consult","08:30","12:30"), P, T("consult","13:30","17:30")],
+          do: [T("consult","08:30","12:30"), P, T("overleg","13:30","15:00","Teamoverleg"), T("admin","15:00","16:30","Administratie")],
+          vr: [T("consult","08:30","12:30"), P, T("consult","13:30","16:30")]
+        } },
+      { naam: "Dr. Nadia Benali", rol: "Huisarts, praktijkopleider", tekst: "Huisarts met een bijzondere interesse in migrantengezondheid en preventie. Ze is praktijkopleider van Elise en doet naast fysieke consulten ook teleconsulten voor opvolging en korte vragen.",
+        rooster: {
+          ma: [T("tele","08:30","10:00"), T("consult","10:00","12:30"), P, T("consult","13:30","17:30")],
+          di: [T("consult","08:30","11:30")],
+          wo: [T("consult","08:30","12:30"), P, T("consult","13:30","17:30")],
+          do: [T("consult","08:30","12:30"), P, T("overleg","13:30","15:00","Teamoverleg"), T("supervisie","15:00","16:30","Supervisie HAIO")],
+          vr: [T("tele","08:30","10:00"), T("consult","10:00","12:30"), P, T("admin","13:30","15:30","Administratie")]
+        } },
+      { naam: "Dr. Wout Lambrechts", rol: "Huisarts, praktijkopleider", tekst: "Huisarts met een bijzondere interesse in hypertensie en cardiovasculair risico. Hij is praktijkopleider van Bram. Hij schat het risico vooral in wanneer hij er zelf aan denkt, niet via een vast systeem.",
+        rooster: {
+          ma: [T("consult","08:30","12:30"), P, T("consult","13:30","16:30")],
+          di: [T("consult","08:30","12:30"), P, T("consult","13:30","17:30")],
+          do: [T("consult","08:30","12:30"), P, T("overleg","13:30","15:00","Teamoverleg"), T("supervisie","15:00","16:30","Supervisie HAIO")],
+          vr: [T("tele","08:30","10:00"), T("consult","10:00","12:30"), P, T("consult","13:30","17:30")]
+        } },
+      { naam: "Dr. Elise Wuyts", rol: "Huisarts in opleiding (HAIO), 2e jaar", tekst: "Huisarts in opleiding in haar tweede jaar. Op dinsdag volgt ze onderwijs aan de universiteit en is ze niet op de praktijk. Ze wordt begeleid door Dr. Benali, met wie ze donderdagnamiddag supervisie heeft.",
+        rooster: {
+          ma: [T("consult","08:30","12:30"), P, T("consult","13:30","17:30")],
+          di: [T("opleiding","08:30","12:30","Opleidingsdag (universiteit)"), P, T("opleiding","13:30","17:30","Opleidingsdag (universiteit)")],
+          wo: [T("consult","08:30","12:30"), P, T("consult","13:30","17:30")],
+          do: [T("consult","08:30","12:30"), P, T("overleg","13:30","15:00","Teamoverleg"), T("supervisie","15:00","16:30")],
+          vr: [T("consult","08:30","12:30"), P, T("consult","13:30","16:30")]
+        } },
+      { naam: "Dr. Bram Declercq", rol: "Huisarts in opleiding (HAIO), 1e jaar", tekst: "Huisarts in opleiding in zijn eerste jaar. Op dinsdag volgt hij onderwijs aan de universiteit en is hij niet op de praktijk. Hij wordt begeleid door Dr. Lambrechts, met wie hij donderdagnamiddag supervisie heeft.",
+        rooster: {
+          ma: [T("consult","08:30","12:30"), P, T("consult","13:30","16:30")],
+          di: [T("opleiding","08:30","12:30","Opleidingsdag (universiteit)"), P, T("opleiding","13:30","17:30","Opleidingsdag (universiteit)")],
+          wo: [T("consult","08:30","12:30"), P, T("consult","13:30","17:30")],
+          do: [T("consult","08:30","12:30"), P, T("overleg","13:30","15:00","Teamoverleg"), T("supervisie","15:00","16:30")],
+          vr: [T("consult","08:30","12:30"), P, T("consult","13:30","17:30")]
+        } },
+      { naam: "Ruben Goossens", rol: "Praktijkverpleegkundige", tekst: "Praktijkverpleegkundige die de triage doet. Hij meet bloeddruk, gewicht en buikomtrek wanneer de arts erom vraagt. Hij werkt voltijds en is elke dag aanwezig.",
+        rooster: {
+          ma: [T("consult","08:30","12:30","Triage en verpleegkundig consult"), P, T("consult","13:30","17:30","Verpleegkundig consult")],
+          di: [T("consult","08:30","12:30","Triage en verpleegkundig consult"), P, T("consult","13:30","17:30","Verpleegkundig consult")],
+          wo: [T("consult","08:30","12:30","Triage en verpleegkundig consult"), P, T("consult","13:30","17:30","Verpleegkundig consult")],
+          do: [T("consult","08:30","12:30","Triage en verpleegkundig consult"), P, T("overleg","13:30","15:00","Teamoverleg"), T("consult","15:00","17:30","Verpleegkundig consult")],
+          vr: [T("consult","08:30","12:30","Triage en verpleegkundig consult"), P, T("consult","13:30","15:30","Verpleegkundig consult")]
+        } },
+      { naam: "Hanne Willems", rol: "Diëtiste", tekst: "Diëtiste die één dag en één voormiddag per week in het centrum werkt. Ze begeleidt patiënten individueel en doet de opvolging deels via videoconsult.",
+        rooster: {
+          wo: [T("consult","08:30","12:30","Dieetconsult"), P, T("consult","13:30","17:30","Dieetconsult")],
+          do: [T("tele","08:30","12:30","Teleconsult (video)")]
+        } },
+      { naam: "Griet Mertens", rol: "Maatschappelijk werker", tekst: "Maatschappelijk werker die patiënten helpt met administratie, kosten en doorverwijzing. Ze werkt drie dagen per week en heeft elke dag een uur administratietijd.",
+        rooster: {
+          ma: [T("consult","08:30","12:30","Sociaal consult"), P, T("consult","13:30","16:30","Sociaal consult"), T("admin","16:30","17:30","Administratie")],
+          di: [T("consult","08:30","12:30","Sociaal consult"), P, T("consult","13:30","16:30","Sociaal consult"), T("admin","16:30","17:30","Administratie")],
+          do: [T("consult","08:30","12:30","Sociaal consult"), P, T("consult","13:30","16:30","Sociaal consult"), T("admin","16:30","17:30","Administratie")]
+        } },
+      { naam: "Kim Verstraeten", rol: "Praktijkmanager en projectcoördinator", tekst: "Praktijkmanager en projectcoördinator. Ze coördineert lopende projecten, zoals het nieuwe afsprakensysteem, en de teamplanning.",
+        rooster: {
+          ma: [T("project","08:30","12:30","Projectmanagement"), P, T("admin","13:30","17:30","Administratie")],
+          di: [T("project","08:30","12:30","Projectmanagement"), P, T("project","13:30","17:30","Projectmanagement")],
+          wo: [T("project","08:30","12:30","Projectmanagement"), P, T("admin","13:30","17:30","Administratie")],
+          do: [T("project","08:30","12:30","Projectmanagement"), P, T("overleg","13:30","15:00","Teamoverleg"), T("admin","15:00","17:30","Administratie")],
+          vr: [T("project","08:30","12:30","Projectmanagement"), P, T("admin","13:30","15:30","Administratie")]
+        } }
+    ],
+    populatie: {
+      totaal: 6800,
+      leeftijd: [
+        { label: "0 – 17 jaar", pct: 21 },
+        { label: "18 – 44 jaar", pct: 36 },
+        { label: "45 – 64 jaar", pct: 27 },
+        { label: "65 – 79 jaar", pct: 12 },
+        { label: "80+ jaar", pct: 4 }
+      ],
+      kenmerken: [
+        { titel: "Hoge doorstroom", tekst: "Patiënten verhuizen vaker dan gemiddeld, waardoor dossiers soms onvolledig zijn." },
+        { titel: "Meertalig", tekst: "Een deel van de patiënten spreekt thuis een andere taal. Waar nodig werken we met een tolk." },
+        { titel: "Drempels om zorg te gebruiken", tekst: "Kosten en werkuren zorgen ervoor dat mensen consultaties uitstellen." },
+      ],
+      indicatoren: [
+        { groep: "Diabetes", rijen: [
+          R("Patiënten met diagnose diabetes in het dossier", 470, 6.9, "van alle patiënten"),
+          R("Patiënten bij wie ooit een verhoogde glycemie of HbA1c gemeten is", 488, 7.2, "van alle patiënten"),
+          R("Patiënten met diabetes bij wie het afgelopen jaar een HbA1c bepaald is", 371, 79, "van de patiënten met diagnose diabetes")
+        ]},
+        { groep: "Nierfunctie", rijen: [
+          R("Patiënten met chronische nierinsufficiëntie (CNI) als diagnose in het dossier", 150, 2.2, "van alle patiënten"),
+          R("Patiënten met minstens twee eGFR-metingen onder 60, drie maanden uit elkaar", 158, 2.3, "van alle patiënten"),
+          R("Patiënten met een eGFR onder 60 bij wie een albumine/creatinine-ratio bepaald is", 111, 70, "van de patiënten met eGFR onder 60")
+        ]},
+        { groep: "Cardiovasculair risico bij 40- tot 69-jarigen", rijen: [
+          R("Bloeddruk gemeten in de laatste 5 jaar", 1176, 49, "van de 40- tot 69-jarigen (2.400)"),
+          R("Cholesterol bepaald in de laatste 5 jaar", 744, 31, "van de 40- tot 69-jarigen"),
+          R("Rookstatus geregistreerd", 984, 41, "van de 40- tot 69-jarigen"),
+          R("Cardiovasculair risico berekend en geregistreerd", 552, 23, "van de 40- tot 69-jarigen")
+        ]}
+      ]
+    }
+  }
+];
+
+/* Onderwerpen in het linkermenu. Wil je er één toevoegen? Voeg een regel toe
+   hier en een bijbehorende render-functie in RENDERERS. */
+const TOPICS = [
+  { id: "visie", titel: "Visie" },
+  { id: "team", titel: "Teamcompositie" },
+  { id: "populatie", titel: "Patiëntenpopulatie" },
+  { id: "ws1", titel: "Workshop 1: SMART doelstelling", ws: 1 },
+  { id: "ws2", titel: "Werkblad workshop 2", ws: 2 },
+  { id: "ws3", titel: "Werkblad workshop 3", ws: 3 }
+];
+
+const DAGEN = [["ma", "Maandag"], ["di", "Dinsdag"], ["wo", "Woensdag"], ["do", "Donderdag"], ["vr", "Vrijdag"]];
+const TYPES = {
+  consult:    { naam: "Fysiek consult", kort: "consult" },
+  tele:       { naam: "Teleconsult", kort: "teleconsult" },
+  huisbezoek: { naam: "Huisbezoek", kort: "huisbezoeken" },
+  admin:      { naam: "Administratie", kort: "administratie" },
+  project:    { naam: "Project en coördinatie", kort: "project en coördinatie" },
+  overleg:    { naam: "Overleg", kort: "overleg" },
+  opleiding:  { naam: "Opleiding", kort: "opleiding" },
+  supervisie: { naam: "Supervisie", kort: "supervisie" },
+  onthaal:    { naam: "Onthaal", kort: "onthaal" },
+  pauze:      { naam: "Middagpauze", kort: "pauze" }
+};
+
+/* =====================================================================
+   WERKBLADEN PER WORKSHOP – opgeslagen via een Cloudflare Worker.
+   Vul hieronder het adres van je Worker in (zie het stappenplan).
+   De opdrachten zelf staan NIET in deze code maar in de database, en worden pas
+   doorgegeven na het juiste wachtwoord van de workshop.
+   ===================================================================== */
+const API_URL = "https://praktijkdossiers-api.laurent-desmet.workers.dev";   // bv. "https://praktijkdossiers-api.jouwnaam.workers.dev"
+
+const wb = { praktijk: null, nr: 0, pw: null, naam: "", loaded: false, versies: {}, ids: [] };
+let wbTimer = null;
+const esc = t => String(t == null ? "" : t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const wbStore = {
+  get(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { sessionStorage.setItem(k, v); } catch (e) { /* geen opslag beschikbaar */ } },
+  del(k) { try { sessionStorage.removeItem(k); } catch (e) { /* idem */ } }
+};
+const wbDatum = iso => {
+  const d = new Date(iso);
+  return isNaN(d) ? String(iso) : d.toLocaleString("nl-BE", { dateStyle: "short", timeStyle: "short" });
+};
+const wbRoot = () => document.getElementById("wb-root");
+
+async function api(path, options = {}) {
+  const res = await fetch(API_URL.replace(/\/$/, "") + path, {
+    ...options,
+    headers: { "Content-Type": "application/json", "X-Wachtwoord": wb.pw || "", ...(options.headers || {}) }
+  });
+  let data = null;
+  try { data = await res.json(); } catch (e) { /* lege respons */ }
+  if (!res.ok) {
+    const err = new Error((data && data.fout) || ("HTTP " + res.status));
+    err.status = res.status;
+    throw err;
+  }
+  return data;
+}
+
+function wbStatus(tekst, soort) {
+  const el = document.getElementById("wb-status");
+  if (!el) return;
+  el.textContent = tekst || "";
+  el.hidden = !tekst;
+  el.className = "wb-note" + (soort === "err" ? " err" : "");
+}
+
+function wbStartPolling() {
+  clearInterval(wbTimer);
+  wbTimer = setInterval(() => wbLoad({}), 20000);
+}
+
+function wbRenderLock() {
+  const root = wbRoot();
+  if (!root) return;
+  root.innerHTML = `<div class="wb-bar">
+      <span>Dit werkblad is vergrendeld. Vul het wachtwoord van workshop ${wb.nr} in zodra je dat krijgt.</span>
+      <input id="wb-pwinput" type="password" placeholder="Wachtwoord" autocomplete="off" aria-label="Wachtwoord workshop ${wb.nr}">
+      <button type="button" class="btn" data-wb="unlock">Openen</button>
+    </div>`;
+}
+
+function initWerkblad(p, nr) {
+  wb.praktijk = p.id; wb.nr = nr; wb.loaded = false; wb.versies = {}; wb.ids = [];
+  wb.pw = wbStore.get("wb-pw-" + nr) || null;
+  wb.naam = wbStore.get("wb-naam") || "";
+  if (!API_URL) {
+    wbStatus("De werkbladen zijn nog niet gekoppeld aan een database. Vul eerst API_URL in de code in.", "err");
+    return;
+  }
+  if (!wb.pw) { wbRenderLock(); return; }
+  wbLoad({});
+  wbStartPolling();
+}
+
+function wbBuild(data) {
+  const root = wbRoot();
+  const praktijk = PRACTICES.find(x => x.id === wb.praktijk);
+  wb.ids = data.opdrachten.map(o => o.id);
+  const kopniveau = data.opdrachten.some(o => o.id.startsWith("kop-")) ? "h4" : "h3";
+  root.innerHTML = `
+    <div class="wb-bar">
+      <span class="wb-who">Werkblad workshop ${wb.nr}${praktijk ? " – " + esc(praktijk.naam) : ""}</span>
+      <input id="wb-naaminput" type="text" maxlength="40" placeholder="Je naam (optioneel)" autocomplete="off" aria-label="Je naam (optioneel)">
+      <button type="button" class="btn secondary" data-wb="refresh">Vernieuwen</button>
+      <button type="button" class="btn secondary" data-wb="lock">Vergrendelen</button>
+    </div>
+    ${data.opdrachten.length ? data.opdrachten.map(q => q.id.startsWith("kop-")
+      ? `<h3 class="wb-kop">${esc(q.titel)}</h3>${q.hint ? `<p class="muted">${esc(q.hint)}</p>` : ""}`
+      : `
+      <section class="wb-card">
+        <${kopniveau}>${esc(q.titel)}</${kopniveau}>
+        ${q.hint ? `<p class="muted">${esc(q.hint)}</p>` : ""}
+        <textarea id="wb-${esc(q.id)}" rows="5" placeholder="Nog niets ingevuld." aria-label="${esc(q.titel)}"></textarea>
+        <div class="wb-meta">
+          <span id="wb-when-${esc(q.id)}"></span>
+          <button type="button" class="btn" data-wb="save" data-q="${esc(q.id)}">Opslaan</button>
+          <button type="button" class="btn secondary" data-wb="reload" data-q="${esc(q.id)}" hidden>Laatste versie laden</button>
+          <span id="wb-msg-${esc(q.id)}" class="wb-msg" role="status"></span>
+        </div>
+        ${q.referentie ? `<details class="ref"><summary>Toon referentieantwoord</summary><p>${esc(q.referentie)}</p></details>` : ""}
+      </section>`).join("") : '<p class="muted">Voor deze workshop zijn nog geen opdrachten ingesteld.</p>'}`;
+  const naam = document.getElementById("wb-naaminput");
+  if (naam) naam.value = wb.naam;
+}
+
+function wbFill(data, opts) {
+  data.opdrachten.forEach(q => {
+    const ta = document.getElementById("wb-" + q.id);
+    if (!ta) return;
+    const r = data.antwoorden[q.id] || null;
+    const remote = r ? r.versie : 0;
+    const dirty = ta.dataset.dirty === "1" && opts.force !== q.id;
+    const msg = document.getElementById("wb-msg-" + q.id);
+    const reload = document.querySelector(`[data-wb=reload][data-q="${q.id}"]`);
+    if (!dirty) {
+      ta.value = r ? r.antwoord : "";
+      delete ta.dataset.dirty;
+      wb.versies[q.id] = remote;
+      if (msg) msg.textContent = "";
+      if (reload) reload.hidden = true;
+    } else if ((wb.versies[q.id] || 0) !== remote) {
+      if (msg) msg.textContent = "Let op: iemand anders heeft dit ondertussen aangepast.";
+      if (reload) reload.hidden = false;
+    }
+    const meta = document.getElementById("wb-when-" + q.id);
+    if (meta) meta.textContent = r
+      ? "Laatst aangepast" + (r.door ? " door " + r.door : "") + " op " + wbDatum(r.bijgewerkt_op)
+      : "Nog niet ingevuld";
+  });
+}
+
+async function wbLoad(opts) {
+  const id = wb.praktijk, nr = wb.nr;
+  if (!id || !API_URL || !wb.pw) return;
+  try {
+    const data = await api(`/api/werkblad?workshop=${nr}&praktijk=${encodeURIComponent(id)}`);
+    if (wb.praktijk !== id || wb.nr !== nr || !wbRoot()) return;   // ondertussen naar een andere pagina
+    if (!wb.loaded || data.opdrachten.map(o => o.id).join("|") !== wb.ids.join("|")) wbBuild(data);
+    wbFill(data, opts);
+    wb.loaded = true;
+    wbStatus("");
+  } catch (e) {
+    if (e.status === 401) {
+      clearInterval(wbTimer);
+      wb.pw = null; wb.loaded = false;
+      wbStore.del("wb-pw-" + nr);
+      wbRenderLock();
+      wbStatus(opts.unlock ? "Dat wachtwoord klopt niet." : "Het wachtwoord is niet meer geldig. Vul het opnieuw in.", "err");
+      return;
+    }
+    if (!wb.loaded) wbStatus("Kon het werkblad niet laden (" + e.message + "). Controleer je internetverbinding.", "err");
+  }
+}
+
+async function wbSave(qid) {
+  const ta = document.getElementById("wb-" + qid);
+  const msg = document.getElementById("wb-msg-" + qid);
+  const reload = document.querySelector(`[data-wb=reload][data-q="${qid}"]`);
+  if (!ta || !msg) return;
+  msg.textContent = "Opslaan…";
+  try {
+    const res = await api("/api/antwoord", {
+      method: "PUT",
+      body: JSON.stringify({
+        workshop: wb.nr, praktijk: wb.praktijk, vraag: qid, antwoord: ta.value,
+        naam: wb.naam || null, verwacht: wb.versies[qid] || 0
+      })
+    });
+    wb.versies[qid] = res.versie;
+    delete ta.dataset.dirty;
+    if (reload) reload.hidden = true;
+    msg.textContent = "Opgeslagen ✓";
+    const meta = document.getElementById("wb-when-" + qid);
+    if (meta) meta.textContent = "Laatst aangepast" + (wb.naam ? " door " + wb.naam : "") + " op " + wbDatum(res.bijgewerkt_op);
+  } catch (e) {
+    if (e.message === "conflict") {
+      msg.textContent = "Iemand anders heeft dit ondertussen aangepast. Kopieer eerst je eigen tekst en laad dan de laatste versie.";
+      if (reload) reload.hidden = false;
+    } else if (e.status === 401) {
+      clearInterval(wbTimer);
+      wb.pw = null; wb.loaded = false; wbStore.del("wb-pw-" + wb.nr);
+      wbRenderLock();
+      wbStatus("Het wachtwoord is niet meer geldig. Vul het opnieuw in.", "err");
+    } else if (e.message === "te_lang") {
+      msg.textContent = "Deze tekst is te lang (maximum 10.000 tekens).";
+    } else {
+      msg.textContent = "Opslaan is niet gelukt (" + e.message + "). Probeer het opnieuw.";
+    }
+  }
+}
+
+async function wbAction(act, q) {
+  if (act === "refresh") { wbLoad({}); return; }
+  if (act === "reload") { wbLoad({ force: q }); return; }
+  if (act === "save") { wbSave(q); return; }
+  if (act === "lock") {
+    clearInterval(wbTimer);
+    wb.pw = null; wb.loaded = false; wbStore.del("wb-pw-" + wb.nr);
+    wbStatus(""); wbRenderLock();
+    return;
+  }
+  if (act === "unlock") {
+    const pw = ((document.getElementById("wb-pwinput") || {}).value || "").trim();
+    if (!pw) { wbStatus("Vul het wachtwoord in.", "err"); return; }
+    wb.pw = pw;
+    await wbLoad({ unlock: true });
+    if (wb.pw) { wbStore.set("wb-pw-" + wb.nr, wb.pw); wbStartPolling(); }
+  }
+}
+
+const acc = (titel, inhoud, nested, open) => `
+  <details class="acc${nested ? " nested" : ""}"${open ? " open" : ""}>
+    <summary>${nested ? `<h4>${titel}</h4>` : `<h3>${titel}</h3>`}<span class="chev" aria-hidden="true"></span></summary>
+    <div class="acc-body">${inhoud}</div>
+  </details>`;
+
+const TOOLBAR = `<div class="toolbar"><button type="button" data-all="open">Alles openen</button><button type="button" data-all="close">Alles sluiten</button></div>`;
+
+const werkbladShell = nr => `
+  <p class="muted">Werk hier samen met je groep aan de opdrachten van workshop ${nr}. Wat je opslaat blijft bewaard en kun je de volgende keer terugvinden. Vul geen echte patiënt- of persoonsgegevens in.</p>
+  <div id="wb-status" class="wb-note" role="status" hidden></div>
+  <div id="wb-root"></div>`;
+
+const RENDERERS = {
+  ws1() { return werkbladShell(1); },
+  ws2() { return werkbladShell(2); },
+  ws3() { return werkbladShell(3); },
+  visie(p) {
+    const [first, ...rest] = p.visie;
+    return `<p class="lead">${first}</p>${rest.map(t => `<p>${t}</p>`).join("")}`;
+  },
+  team(p) {
+    const initials = n => n.replace(/^Dr\.\s*/, "").split(" ").map(w => w[0]).slice(0, 2).join("");
+    const mins = t => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
+    const fmtH = n => n.toLocaleString("nl-BE", { maximumFractionDigits: 1 }) + " u";
+    const hoursOf = r => {
+      const per = {}; let tot = 0;
+      for (const [k] of DAGEN) for (const b of (r[k] || [])) {
+        if (b.type === "pauze") continue;
+        const h = (mins(b.tot) - mins(b.van)) / 60;
+        per[b.type] = (per[b.type] || 0) + h; tot += h;
+      }
+      return { tot, per };
+    };
+    const lab = b => b.label || TYPES[b.type].naam;
+    const blk = b => `<div class="blk t-${b.type}"><span class="tm">${b.van}–${b.tot}</span><span class="lb">${lab(b)}</span></div>`;
+    const used = new Set();
+    p.team.forEach(m => m.rooster && Object.values(m.rooster).flat().forEach(b => used.add(b.type)));
+    const legend = Object.keys(TYPES).filter(t => used.has(t)).map(t => `<span class="blk t-${t}"><span class="lb">${TYPES[t].naam}</span></span>`).join("");
+
+    /* --- teamleden met uitklapbare persoonlijke werkagenda --- */
+    const members = p.team.map(m => {
+      let meta = "", agenda = "";
+      if (m.rooster) {
+        const { tot, per } = hoursOf(m.rooster);
+        const vte = tot >= 38 ? "voltijds" : (tot / 38).toLocaleString("nl-BE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " VTE";
+        meta = `<div class="hours"><strong>${fmtH(tot)} per week</strong><span>${vte}</span></div>`;
+        const split = Object.entries(per).sort((x, y) => y[1] - x[1]).map(([t, h]) => `${TYPES[t].kort} ${fmtH(h)}`).join(" · ");
+        agenda = `
+          <details class="agenda">
+            <summary>Persoonlijke werkagenda<span class="chev" aria-hidden="true"></span></summary>
+            <div class="week" role="group" aria-label="Weekrooster van ${m.naam}">
+              ${DAGEN.map(([k, naam]) => `
+                <div class="day"><div class="dayname" title="${naam}">${naam.slice(0, 2)}</div>
+                  <div class="blocks">${(m.rooster[k] || []).map(blk).join("") || '<div class="off">Niet aanwezig</div>'}</div></div>`).join("")}
+            </div>
+            <p class="split">Verdeling: ${split}</p>
+          </details>`;
+      } else {
+        meta = `<div class="hours"><strong>Extern</strong></div>`;
+        agenda = `<p class="extern">${m.extern}</p>`;
+      }
+      return `
+      <li class="member">
+        <div class="mtop">
+          <div class="avatar" aria-hidden="true">${initials(m.naam)}</div>
+          <div><h3>${m.naam}</h3><div class="role">${m.rol}</div></div>
+          ${meta}
+        </div>
+        <p class="mdesc">${m.tekst}</p>
+        ${agenda}
+      </li>`;
+    }).join("");
+
+    /* --- algemeen praktijkrooster: één tabblad per dag, tijdlijn per teamlid --- */
+    const START = 8 * 60, END = 18 * 60;
+    const pos = t => (mins(t) - START) / (END - START) * 100;
+    const withRooster = p.team.filter(m => m.rooster);
+    const externen = p.team.filter(m => !m.rooster);
+    const axis = `<div class="trow axis" aria-hidden="true"><div></div><div class="track">${
+      Array.from({ length: 11 }, (_, i) => `<span style="left:${i * 10}%">${8 + i}u</span>`).join("")}</div></div>`;
+    const panel = ([k, naam], i) => {
+      const rows = withRooster.map(m => {
+        const bl = m.rooster[k] || [];
+        const cells = bl.map(b => `<div class="tb t-${b.type}" style="left:${pos(b.van)}%;width:${pos(b.tot) - pos(b.van)}%" title="${b.van}–${b.tot} · ${lab(b)}">${lab(b)}</div>`).join("");
+        return `<div class="trow"><div class="tname"><strong>${m.naam}</strong><span>${m.rol}</span></div>
+          <div class="track">${cells || '<span class="tl-off">niet aanwezig</span>'}</div></div>`;
+      }).join("");
+      const aanwezig = withRooster.filter(m => (m.rooster[k] || []).some(b => b.type !== "pauze" && b.type !== "opleiding")).length;
+      const opl = withRooster.filter(m => (m.rooster[k] || []).some(b => b.type === "opleiding"));
+      return `
+      <div role="tabpanel" id="panel-${k}" aria-labelledby="tab-${k}" ${i ? "hidden" : ""}>
+        <div class="tl-scroll"><div class="timeline">${axis}${rows}</div></div>
+        <p class="daynote">${naam}: ${aanwezig} van ${withRooster.length} teamleden aanwezig in de praktijk.${
+          opl.length ? ` Opleidingsdag aan de universiteit: ${opl.map(o => o.naam).join(", ")}.` : ""}</p>
+      </div>`;
+    };
+    const rooster = `
+      <div class="rooster">
+        <div class="tabs" role="tablist" aria-label="Kies een dag">
+          ${DAGEN.map(([k, naam], i) => `<button type="button" role="tab" id="tab-${k}" aria-controls="panel-${k}" aria-selected="${i === 0}" data-day="${k}">${naam}</button>`).join("")}
+        </div>
+        ${DAGEN.map(panel).join("")}
+      </div>`;
+
+    return `
+      <p class="muted">Elk teamlid heeft een korte beschrijving en een persoonlijke werkagenda die je kunt openen. Het praktijkrooster toont per dag wie wat doet. 38 uur per week is voltijds; middagpauzes tellen niet mee in de uren.</p>
+      ${TOOLBAR}
+      <div class="legend" aria-label="Legende">${legend}<span class="blk t-pauze"><span class="lb">Middagpauze</span></span></div>
+      <div class="accs">
+        ${acc("Teamleden", `<ul class="team">${members}</ul>`, false, true)}
+        ${acc("Praktijkrooster per dag", rooster, false, true)}
+      </div>`;
+  },
+  populatie(p) {
+    const d = p.populatie;
+    const fmt = n => n.toLocaleString("nl-BE");
+    const bars = rows => `<ul class="bars">${rows.map(r => `
+        <li><span>${r.label}</span>
+          <span class="track" role="presentation"><span class="fill" style="display:block;width:${r.pct}%"></span></span>
+          <span class="pct">${fmt(r.pct)}%</span></li>`).join("")}</ul>`;
+    const sec = acc;
+    const groups = (d.indicatoren || []).map(g => sec(g.groep, `
+        <ul class="ind">
+          <li class="ind-head" aria-hidden="true"><span></span><span class="num">Aantal</span><span class="num">Aandeel</span></li>
+          ${g.rijen.map(r => `
+          <li><span>${r.label}<small>${r.noemer}</small></span><span class="num">${fmt(r.n)}</span><span class="num">${fmt(r.pct)}%</span></li>`).join("")}
+        </ul>`, true)).join("");
+    return `
+      <div class="total"><strong>${fmt(d.totaal)}</strong><span>ingeschreven patiënten</span></div>
+      ${TOOLBAR}
+      <div class="accs">
+        ${sec("Leeftijdsverdeling", bars(d.leeftijd))}
+        ${sec("Kenmerken van de populatie", `<ul class="traits">${d.kenmerken.map(k => `<li><strong>${k.titel}</strong><span>${k.tekst}</span></li>`).join("")}</ul>`)}
+        ${sec("Registratie en opvolging in het dossier", `<p class="muted">Cijfers uit het elektronisch patiëntendossier van de praktijk.</p>${groups}`)}
+      </div>`;
+  }
+};
+
+/* ---------- Weergave ---------- */
+const app = document.getElementById("app");
+
+function renderLanding() {
+  document.title = "Dossiers huisartsenpraktijken";
+  app.innerHTML = `
+    <main class="landing">
+      <h1>Dossiers huisartsenpraktijken</h1>
+      <p class="intro">Kies een dossier om de visie, het team en de patiëntenpopulatie van een praktijk te bekijken.</p>
+      <div class="cabinet">
+        ${PRACTICES.map(p => `
+          <a class="folder ${p.cls}" href="#/${p.id}" data-nav="/${p.id}">
+            <span class="sheet"></span>
+            <span class="body">
+              <span class="label"><h2>${p.naam}</h2><span>${p.tagline}</span></span>
+              <span class="open">Dossier openen</span>
+            </span>
+          </a>`).join("")}
+      </div>
+    </main>`;
+  window.scrollTo(0, 0);
+}
+
+function renderDossier(p, topicId) {
+  const topic = TOPICS.find(t => t.id === topicId) || TOPICS[0];
+  document.title = `${topic.titel} – ${p.naam}`;
+  app.innerHTML = `
+    <div class="dossier ${p.cls}">
+      <aside class="side">
+        <a class="back" href="#/" data-nav="/">‹ Alle dossiers</a>
+        <div>
+          <h1>${p.naam}</h1>
+          <p class="tagline">${p.tagline}</p>
+        </div>
+        <nav aria-label="Onderwerpen">
+          <ul class="topics">
+            ${TOPICS.map(t => `
+              <li><a href="#/${p.id}/${t.id}" data-nav="/${p.id}/${t.id}" ${t.id === topic.id ? 'aria-current="page"' : ""}>${t.titel}</a></li>`).join("")}
+          </ul>
+        </nav>
+      </aside>
+      <main class="main">
+        <div class="main-inner ${topic.id === 'team' ? 'wide' : ''}">
+          <h2 tabindex="-1" id="topic-title">${topic.titel}</h2>
+          ${RENDERERS[topic.id](p)}
+        </div>
+      </main>
+    </div>`;
+  window.scrollTo(0, 0);
+  if (topic.ws) initWerkblad(p, topic.ws);
+}
+
+let currentPath = null;
+
+function route(path) {
+  if (path === undefined) path = location.hash.slice(1);
+  currentPath = path;
+  clearInterval(wbTimer);
+  try {
+    const [, id, topic] = path.split("/");
+    const practice = PRACTICES.find(p => p.id === id);
+    if (practice) renderDossier(practice, topic);
+    else renderLanding();
+  } catch (err) {
+    console.error(err);
+    app.innerHTML = `<div class="err"><h1>Er ging iets mis bij het laden van deze pagina</h1><p>${err && err.message ? err.message : err}</p><p><a href="#/" data-nav="/">Terug naar alle dossiers</a></p></div>`;
+  }
+}
+
+function navigate(path) {
+  try { history.pushState(null, "", "#" + path); } catch (e) { /* preview zonder history-toegang */ }
+  route(path);
+}
+
+/* Eén klik-afhandelaar voor alles: werkt ook waar #-links geblokkeerd zijn. */
+document.addEventListener("click", e => {
+  const el = e.target.closest ? e.target : e.target.parentElement;
+  if (!el) return;
+
+  const wbEl = el.closest("[data-wb]");
+  if (wbEl) { wbAction(wbEl.dataset.wb, wbEl.dataset.q); return; }
+
+  const all = el.closest("[data-all]");
+  if (all) {
+    document.querySelectorAll(".main details").forEach(d => { d.open = all.dataset.all === "open"; });
+    return;
+  }
+
+  const tab = el.closest("[data-day]");
+  if (tab) {
+    const box = tab.closest(".rooster");
+    box.querySelectorAll("[data-day]").forEach(b => b.setAttribute("aria-selected", String(b === tab)));
+    box.querySelectorAll("[role=tabpanel]").forEach(pn => { pn.hidden = pn.id !== "panel-" + tab.dataset.day; });
+    return;
+  }
+
+  const link = el.closest("[data-nav]");
+  if (!link) return;
+  e.preventDefault();
+  navigate(link.getAttribute("data-nav"));
+});
+
+/* Werkblad: een aangepast veld markeren, en Enter in het codeveld = ontgrendelen */
+document.addEventListener("input", e => {
+  if (!e.target.matches) return;
+  if (e.target.matches(".wb-card textarea")) e.target.dataset.dirty = "1";
+  if (e.target.id === "wb-naaminput") { wb.naam = e.target.value.trim(); wbStore.set("wb-naam", wb.naam); }
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter" && e.target.id === "wb-pwinput") wbAction("unlock");
+});
+
+/* Terugknop en handmatig aangepaste URL's */
+const onUrlChange = () => { const h = location.hash.slice(1); if (h !== currentPath) route(h); };
+window.addEventListener("popstate", onUrlChange);
+window.addEventListener("hashchange", onUrlChange);
+route();
+</script>
+</body>
+</html>
