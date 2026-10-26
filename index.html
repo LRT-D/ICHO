@@ -33,6 +33,7 @@
   }
 
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   html { -webkit-text-size-adjust: 100%; }
   body {
     margin: 0;
@@ -333,6 +334,28 @@
   .wb-card.themed { border-left: 6px solid var(--k); background: color-mix(in srgb, var(--k) 9%, var(--paper)); }
   .wb-card.themed textarea { background: var(--paper); }
   .wb-card.themed textarea:not([readonly]) { border-color: var(--k); }
+
+  .sb-uitleg { margin: -.2rem 0 1.2rem; padding: .7rem 1rem .8rem; border-left: 6px solid var(--k); border-radius: 0 8px 8px 0; background: color-mix(in srgb, var(--k) 11%, var(--paper)); font-size: .98rem; }
+  .sb-uitleg p { margin: .4rem 0 0; }
+  .sb-lbl { display: block; font-family: var(--display); font-size: .78rem; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-soft); }
+
+  /* indicatoren (meetbaar) */
+  .ind { display: grid; gap: 1rem; margin-top: .4rem; }
+  .ind-som { margin: 0; font-size: .92rem; font-weight: 500; color: var(--ink-soft); }
+  .ind-kaart { display: grid; gap: .7rem; padding: .8rem 1rem 1rem; background: var(--paper); border: 1px solid var(--line); border-left: 6px solid var(--line); border-radius: 8px; }
+  .ind-kaart[data-soort="structuur"] { border-left-color: #8E7CC3; }
+  .ind-kaart[data-soort="proces"] { border-left-color: #3AA6B9; }
+  .ind-kaart[data-soort="uitkomst"] { border-left-color: #E8763A; }
+  .ind-kop { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .9rem; }
+  .ind-soort { display: flex; flex-wrap: wrap; gap: .35rem; }
+  .ind-chip { --cc: #8E7CC3; font: inherit; font-family: var(--display); font-weight: 500; font-size: .88rem; padding: .3rem .9rem; border: 2px solid var(--cc); border-radius: 99px; background: transparent; color: var(--ink); cursor: pointer; }
+  .ind-chip.chip-proces { --cc: #3AA6B9; } .ind-chip.chip-uitkomst { --cc: #E8763A; }
+  .ind-chip.aan { background: var(--cc); color: #14212a; }
+  .ind .ind-kaart label { display: grid; gap: .25rem; font-size: .9rem; font-weight: 500; color: var(--ink-soft); }
+  .ind .ind-kaart textarea, .ind .ind-kaart input[type="text"] { width: 100%; min-width: 0; min-height: 0; padding: .45rem .6rem; font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 6px; }
+  .ind .ind-kaart textarea { min-height: 3.6rem; resize: vertical; }
+  .ind-twee { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+  @media (max-width: 700px) { .ind-twee { grid-template-columns: 1fr; } }
 
   /* volume/resource balans */
   .bal { display: grid; gap: 1.3rem; margin-top: .4rem; }
@@ -786,16 +809,18 @@ const SMART_VOLGORDE = ["specifiek", "meetbaar", "aanvaardbaar", "realistisch", 
 const smartSleutel = id => id.replace(/^kop-/, "").replace(/-\d+$/, "");
 const smartIcoon = s => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${s.icoon}</svg>`;
 
+const hintHtml = t => String(t).split("\n").filter(x => x.trim())
+  .map(r => `<p>${esc(r).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")}</p>`).join("");
+
 function wbKopHtml(q) {
   const s = SMART[smartSleutel(q.id)];
-  const hint = q.hint ? `<p class="muted">${esc(q.hint)}</p>` : "";
-  if (!s) return `<h3 class="wb-kop">${esc(q.titel)}</h3>${hint}`;
+  if (!s) return `<h3 class="wb-kop">${esc(q.titel)}</h3>${q.hint ? `<p class="muted">${esc(q.hint)}</p>` : ""}`;
   const nr = (q.titel.match(/(\d+)\s*$/) || [])[1];
   return `<h3 class="smart-banner" style="--k:${s.kleur};--kt:${s.tekst}">
       <span class="sb-hex">${smartIcoon(s)}</span>
       <span class="sb-titel"><b>${esc(s.naam[0])}</b>${esc(s.naam.slice(1))}</span>
       ${nr ? `<span class="sb-nr">${esc(nr)}</span>` : ""}
-    </h3>${hint}`;
+    </h3>${q.hint ? `<div class="sb-uitleg" style="--k:${s.kleur}"><span class="sb-lbl">Wat verwachten we?</span>${hintHtml(q.hint)}</div>` : ""}`;
 }
 
 function wbStripHtml(aanwezig) {
@@ -803,6 +828,90 @@ function wbStripHtml(aanwezig) {
     const s = SMART[k], actief = aanwezig.includes(k);
     return `<span class="ss-item${actief ? "" : " dim"}" style="--k:${s.kleur};--kt:${s.tekst}"${actief ? "" : ' title="Komt in een volgende stap aan bod"'}><span class="ss-hex">${s.letter}</span>${s.naam}</span>`;
   }).join("")}</div>`;
+}
+
+/* ---------- Indicatoren (Meetbaar) ---------- */
+const IND_SOORTEN = { structuur: "Structuur", proces: "Proces", uitkomst: "Uitkomst" };
+const indLegeRij = () => ({ s: "", i: "", d: "", m: "" });
+function indNormaliseer(o) {
+  o = o && typeof o === "object" ? o : {};
+  const rijen = Array.isArray(o.r) && o.r.length
+    ? o.r.map(x => ({
+        s: Object.keys(IND_SOORTEN).includes(x.s) ? x.s : "",
+        i: String(x.i == null ? "" : x.i), d: String(x.d == null ? "" : x.d), m: String(x.m == null ? "" : x.m)
+      }))
+    : [indLegeRij(), indLegeRij(), indLegeRij()];
+  return { r: rijen };
+}
+function indLees(id) {
+  const ta = document.getElementById("wb-" + id);
+  let o = {};
+  try { o = JSON.parse(ta && ta.value ? ta.value : "{}"); } catch (e) { o = {}; }
+  return indNormaliseer(o);
+}
+function indSchrijf(id, st) {
+  const ta = document.getElementById("wb-" + id);
+  if (!ta) return;
+  ta.value = JSON.stringify(st);
+  ta.dataset.dirty = "1";
+}
+function indBuild(id) {
+  const box = document.querySelector(`[data-ind="${id}"]`);
+  if (!box) return;
+  const st = indLees(id);
+  box.innerHTML = `
+    <p class="ind-som" data-ind-som role="status"></p>
+    ${st.r.map((r, i) => `
+    <div class="ind-kaart" data-soort="${esc(r.s)}">
+      <div class="ind-kop">
+        <strong>Indicator ${i + 1}</strong>
+        <div class="ind-soort" role="group" aria-label="Soort indicator ${i + 1}">
+          ${Object.entries(IND_SOORTEN).map(([k, n]) => `<button type="button" class="ind-chip chip-${k}${r.s === k ? " aan" : ""}" data-ind-act="soort" data-i="${i}" data-s="${k}" aria-pressed="${r.s === k}">${n}</button>`).join("")}
+        </div>
+        <button type="button" class="bal-del" data-ind-act="del" data-i="${i}" aria-label="Indicator ${i + 1} verwijderen">×</button>
+      </div>
+      <label>Wat is de indicator precies?
+        <textarea rows="2" data-ind-r="${i}.i" placeholder="Formuleer wat jullie exact meten, met teller en noemer.">${esc(r.i)}</textarea></label>
+      <div class="ind-twee">
+        <label>Wat is het doel?
+          <input type="text" data-ind-r="${i}.d" value="${esc(r.d)}" placeholder="Welke waarde willen jullie bereiken?"></label>
+        <label>Wanneer wordt dit gemeten?
+          <input type="text" data-ind-r="${i}.m" value="${esc(r.m)}" placeholder="Bv. elk jaar in januari"></label>
+      </div>
+    </div>`).join("")}
+    <div class="bal-acties"><button type="button" class="btn secondary" data-ind-act="add">Indicator toevoegen</button></div>`;
+  indBereken(id);
+}
+function indBereken(id) {
+  const box = document.querySelector(`[data-ind="${id}"]`);
+  const som = box && box.querySelector("[data-ind-som]");
+  if (!som) return;
+  const st = indLees(id);
+  const tel = { structuur: 0, proces: 0, uitkomst: 0 };
+  st.r.forEach(r => { if (r.s) tel[r.s]++; });
+  const ontbreekt = Object.keys(tel).filter(k => !tel[k]).map(k => IND_SOORTEN[k].toLowerCase());
+  som.textContent = Object.keys(tel).map(k => `${IND_SOORTEN[k]}: ${tel[k]}`).join(" · ")
+    + (ontbreekt.length && st.r.some(r => r.s) ? `. Probeer minstens één indicator van elk soort te formuleren (nog ontbrekend: ${ontbreekt.join(", ")}).` : "");
+  box.querySelectorAll(".ind-kaart").forEach((kaart, i) => { kaart.dataset.soort = st.r[i] ? st.r[i].s : ""; });
+}
+function indInput(el) {
+  const box = el.closest("[data-ind]");
+  if (!box) return;
+  const id = box.dataset.ind, st = indLees(id);
+  const [i, veld] = el.dataset.indR.split(".");
+  if (st.r[Number(i)]) st.r[Number(i)][veld] = el.value;
+  indSchrijf(id, st);
+  indBereken(id);
+}
+function indActie(el) {
+  const box = el.closest("[data-ind]");
+  if (!box) return;
+  const id = box.dataset.ind, st = indLees(id), act = el.dataset.indAct;
+  if (act === "add") st.r.push(indLegeRij());
+  if (act === "del") { st.r.splice(Number(el.dataset.i), 1); if (!st.r.length) st.r.push(indLegeRij()); }
+  if (act === "soort") { const r = st.r[Number(el.dataset.i)]; if (r) r.s = r.s === el.dataset.s ? "" : el.dataset.s; }
+  indSchrijf(id, st);
+  indBuild(id);
 }
 
 /* ---------- Volume/resource balans ---------- */
@@ -1038,7 +1147,7 @@ function wbRenderLock() {
   const root = wbRoot();
   if (!root) return;
   root.innerHTML = `<div class="wb-bar">
-      <span>Dit werkblad is vergrendeld. Vul het wachtwoord van workshop ${wb.nr} in zodra je dat krijgt.</span>
+      <span>Dit werkblad is vergrendeld. Vul het wachtwoord van workshop ${wb.nr} in zodra jullie dat krijgen.</span>
       <input id="wb-pwinput" type="password" placeholder="Wachtwoord" autocomplete="off" aria-label="Wachtwoord workshop ${wb.nr}">
       <button type="button" class="btn" data-wb="unlock">Openen</button>
     </div>`;
@@ -1084,9 +1193,10 @@ function wbBuild(data) {
   const delen = data.opdrachten.map(q => {
     if (q.id.startsWith("kop-")) { thema = SMART[smartSleutel(q.id)] || null; return wbKopHtml(q); }
     const id = esc(q.id);
-    const binnenwerk = q.id.startsWith("widget-balans")
-      ? `<textarea id="wb-${id}" hidden></textarea><div class="bal" data-bal="${id}"></div>`
-      : `<textarea id="wb-${id}" rows="5" placeholder="Nog niets ingevuld." aria-label="${esc(q.titel)}"></textarea>`;
+    let binnenwerk;
+    if (q.id.startsWith("widget-balans")) binnenwerk = `<input type="hidden" id="wb-${id}"><div class="bal" data-bal="${id}"></div>`;
+    else if (q.id.startsWith("widget-indicatoren")) binnenwerk = `<input type="hidden" id="wb-${id}"><div class="ind" data-ind="${id}"></div>`;
+    else binnenwerk = `<textarea id="wb-${id}" rows="5" placeholder="Nog niets ingevuld." aria-label="${esc(q.titel)}"></textarea>`;
     return wbKaart(q, thema, niveau, binnenwerk);
   });
   root.innerHTML = `
@@ -1101,6 +1211,7 @@ function wbBuild(data) {
   const naam = document.getElementById("wb-naaminput");
   if (naam) naam.value = wb.naam;
   data.opdrachten.filter(o => o.id.startsWith("widget-balans")).forEach(o => balBuild(o.id));
+  data.opdrachten.filter(o => o.id.startsWith("widget-indicatoren")).forEach(o => indBuild(o.id));
 }
 
 function wbFill(data, opts) {
@@ -1117,9 +1228,9 @@ function wbFill(data, opts) {
       const veranderd = ta.value !== nieuweWaarde;
       ta.value = nieuweWaarde;
       delete ta.dataset.dirty;
-      if (q.id.startsWith("widget-balans")) {
-        const balBox = document.querySelector(`[data-bal="${q.id}"]`);
-        if (balBox && (veranderd || balBox.childElementCount === 0)) balBuild(q.id);
+      const wBox = document.querySelector(`[data-bal="${q.id}"], [data-ind="${q.id}"]`);
+      if (wBox && (veranderd || wBox.childElementCount === 0)) {
+        if (q.id.startsWith("widget-balans")) balBuild(q.id); else indBuild(q.id);
       }
       wb.versies[q.id] = remote;
       if (msg) msg.textContent = "";
@@ -1180,7 +1291,7 @@ async function wbSave(qid) {
     if (meta) meta.textContent = "Laatst aangepast" + (wb.naam ? " door " + wb.naam : "") + " op " + wbDatum(res.bijgewerkt_op);
   } catch (e) {
     if (e.message === "conflict") {
-      msg.textContent = "Iemand anders heeft dit ondertussen aangepast. Kopieer eerst je eigen tekst en laad dan de laatste versie.";
+      msg.textContent = "Iemand anders heeft dit ondertussen aangepast. Kopieer eerst jullie eigen tekst en laad dan de laatste versie.";
       if (reload) reload.hidden = false;
     } else if (e.status === 401) {
       clearInterval(wbTimer);
@@ -1223,7 +1334,7 @@ const acc = (titel, inhoud, nested, open) => `
 const TOOLBAR = `<div class="toolbar"><button type="button" data-all="open">Alles openen</button><button type="button" data-all="close">Alles sluiten</button></div>`;
 
 const werkbladShell = nr => `
-  <p class="muted">Werk hier samen met je groep aan de opdrachten van workshop ${nr}. Wat je opslaat blijft bewaard en kun je de volgende keer terugvinden. Vul geen echte patiënt- of persoonsgegevens in.</p>
+  <p class="muted">Werk hier samen met jullie groep aan de opdrachten van workshop ${nr}. Wat jullie opslaan blijft bewaard en kunnen jullie de volgende keer terugvinden. Vul geen echte patiënt- of persoonsgegevens in.</p>
   <div id="wb-status" class="wb-note" role="status" hidden></div>
   <div id="wb-root"></div>`;
 
@@ -1432,6 +1543,9 @@ document.addEventListener("click", e => {
   const el = e.target.closest ? e.target : e.target.parentElement;
   if (!el) return;
 
+  const indEl = el.closest("[data-ind-act]");
+  if (indEl) { indActie(indEl); return; }
+
   const balEl = el.closest("[data-bal-act]");
   if (balEl) { balActie(balEl); return; }
 
@@ -1464,6 +1578,7 @@ document.addEventListener("input", e => {
   if (e.target.matches(".wb-card textarea")) e.target.dataset.dirty = "1";
   if (e.target.id === "wb-naaminput") { wb.naam = e.target.value.trim(); wbStore.set("wb-naam", wb.naam); }
   if (e.target.dataset && (e.target.dataset.balF !== undefined || e.target.dataset.balR !== undefined)) balInput(e.target);
+  if (e.target.dataset && e.target.dataset.indR !== undefined) indInput(e.target);
 });
 document.addEventListener("change", e => {
   if (e.target.matches && e.target.matches("[data-bal-team]")) { balTeamlid(e.target); e.target.value = ""; }
