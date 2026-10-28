@@ -397,6 +397,89 @@
   .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   @media (prefers-reduced-motion: reduce) { .bal-beam { transition: none; } }
 
+  /* extra bouwstenen uit de protocolbouwer */
+  .lw, .stk, .vb { display: grid; gap: .9rem; margin-top: .4rem; }
+  .lw-kaart { display: grid; gap: .7rem; padding: .8rem 1rem 1rem; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; }
+  .lw-kop { display: flex; justify-content: space-between; align-items: center; gap: .6rem; flex-wrap: wrap; }
+  .lw-acties { display: flex; gap: .35rem; }
+  .cardbtn { font: inherit; font-size: .82rem; font-weight: 600; padding: .25rem .65rem; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink-soft); cursor: pointer; }
+  .cardbtn:hover:not(:disabled) { border-color: var(--c); color: var(--ink); }
+  .cardbtn:disabled { opacity: .35; cursor: default; }
+  .cardbtn.danger { color: #c0392b; }
+  .lw-velden, .vb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem .9rem; }
+  .lw-velden label, .vb-grid label, .stk label { display: grid; gap: .25rem; font-size: .88rem; font-weight: 500; color: var(--ink-soft); }
+  .lw-velden .breed, .vb-grid .breed { grid-column: 1 / -1; }
+  .lw input[type="text"], .lw input[type="date"], .lw textarea, .vb input, .vb select, .stk input[type="text"], .stk textarea {
+    width: 100%; min-width: 0; min-height: 0; padding: .45rem .6rem; font: inherit; color: var(--ink);
+    background: var(--paper); border: 1px solid var(--line); border-radius: 6px;
+  }
+  .lw textarea, .stk textarea { min-height: 3.4rem; resize: vertical; display: block; }
+  .lw-tab { width: 100%; min-width: 0; border-collapse: collapse; }
+  .lw-tab th { text-align: left; padding: .4rem .5rem; font-family: var(--display); font-weight: 500; font-size: .85rem; background: color-mix(in srgb, var(--ink) 9%, var(--paper)); border: 1px solid var(--line); }
+  .lw-tab th small { display: block; font-weight: 400; color: var(--ink-soft); }
+  .lw-tab td { padding: .3rem .4rem; border: 1px solid var(--line); vertical-align: top; }
+  .stk-matrix { min-width: 560px; }
+  @media (max-width: 700px) { .lw-velden, .vb-grid { grid-template-columns: 1fr; } }
+
+  /* voorbeeld van het protocol */
+  .dossier.has-preview { grid-template-columns: 290px minmax(380px, 1.05fr) minmax(0, 1.3fr); }
+  .dossier.has-preview.pv-hide { grid-template-columns: 290px 1fr; }
+  .dossier.has-preview.pv-hide .pv-panel { display: none; }
+  .has-preview .main-inner, .has-preview .main-inner.wide { max-width: 100%; }
+  .has-preview .main { padding-left: clamp(1.2rem, 2.5vw, 2.5rem); padding-right: clamp(1.2rem, 2.5vw, 2.5rem); }
+  .pv-panel { position: sticky; top: 0; height: 100vh; overflow-y: auto; background: #fff; color: #1E2A22; border-right: 1px solid var(--line); display: flex; flex-direction: column; }
+  .pv-head { position: sticky; top: 0; z-index: 2; display: flex; justify-content: space-between; align-items: center; gap: .6rem; flex-wrap: wrap; padding: .7rem 1rem; background: #DEE8E2; border-bottom: 1px solid #C9CFC0; font-family: var(--display); }
+  .pv-head .btn { padding: .25rem .8rem; font-size: .85rem; }
+  .pv-head .btn:not(.secondary) { background: #203F37; border-color: #203F37; color: #fff; }
+  .pv-head .btn.secondary { background: #fff; color: #203F37; border-color: #203F37; }
+  .pv-acties { display: flex; gap: .4rem; }
+  .pv-sluit { display: none; }
+  .pv-noot { margin: .7rem 1.2rem 0; font-size: .8rem; color: #4B5B50; }
+  .pv-doc { padding: 1rem 1.3rem 2.5rem; font-family: var(--text); font-size: .92rem; line-height: 1.5; }
+  .pv-doc h2 { font-size: 1.05rem; color: #203F37; border-bottom: 2px solid #203F37; padding-bottom: .3rem; margin: 1.6rem 0 .5rem; }
+  .pv-doc h3 { font-size: .9rem; color: #2F5D50; margin: .9rem 0 .3rem; }
+  .pv-doc h3.sub { margin-top: .6rem; }
+  .pv-doc table { width: 100%; border-collapse: collapse; margin: .4rem 0 .8rem; font-size: .76rem; }
+  .pv-doc table th, .pv-doc table td { border: 1px solid #C9CFC0; padding: .3rem .45rem; text-align: left; vertical-align: top; }
+  .pv-doc table th { background: #DEE8E2; }
+  .pv-doc table.fl { border: 0; margin: 0; }
+  .pv-doc table.fl td { border: 0; padding: .25rem 0; font-size: .8rem; }
+  .pv-doc table.fl td.fll { width: 11rem; font-weight: 600; color: #2F5D50; padding-right: .8rem; }
+  .pv-doc .freetext { margin: .3rem 0 .8rem; padding: .1rem 0 .1rem .9rem; border-left: 3px solid #DEE8E2; font-size: .82rem; white-space: pre-line; }
+  .pv-doc .empty { color: #8c8c8c; font-style: italic; }
+  .pv-doc .pv-minikop { margin: .5rem 0 .1rem; font-size: .76rem; font-weight: 600; color: #2F5D50; }
+  .pv-cover { border: 1px solid #C9CFC0; border-radius: 6px; padding: .9rem 1rem .8rem; margin-bottom: 1rem; background: #F7F8F3; }
+  .pv-cover-top { display: flex; align-items: baseline; justify-content: space-between; gap: .6rem; flex-wrap: wrap; }
+  .pvname { margin: 0 0 .1rem; font-family: var(--display); font-size: 1.15rem; font-weight: 700; color: #203F37; }
+  .pvtitle { margin: 0 0 .6rem; font-weight: 600; }
+  .pvmeta { display: grid; grid-template-columns: 1fr 1fr; gap: .25rem .9rem; font-size: .74rem; color: #4B5B50; }
+  .pvmeta b { color: #203F37; }
+  .pv-wide { grid-column: 1 / -1; }
+  .status-badge { padding: .2rem .7rem; border-radius: 99px; font-size: .7rem; font-weight: 700; white-space: nowrap; }
+  .st-opbouw { background: #F1E3CD; color: #B8874A; } .st-actueel { background: #DCEBE2; color: #3E7A5D; } .st-revisie { background: #F3DED8; color: #A6432E; }
+  .pv-doc .toc { border: 1px solid #C9CFC0; border-radius: 6px; padding: .6rem .9rem; background: #F7F8F3; font-size: .76rem; margin-bottom: .5rem; }
+  .pv-doc .toc-group { margin: .7rem 0 .15rem; font-weight: 700; color: #203F37; }
+  .pv-doc .toc-group:first-child { margin-top: 0; }
+  .pv-doc .toc a { display: block; padding: .2rem 0 .2rem .7rem; color: #1E2A22; text-decoration: none; border-left: 2px solid transparent; }
+  .pv-doc .toc a:hover { color: #203F37; border-left-color: #2F5D50; background: #DEE8E2; }
+  .pv-toggle { margin: 0 0 1rem; }
+  @media (max-width: 1449px) {
+    .dossier.has-preview { grid-template-columns: 290px 1fr; }
+    .pv-panel { position: fixed; left: 0; top: 0; bottom: 0; width: min(560px, 100%); height: auto; z-index: 50; transform: translateX(-105%); transition: transform .25s ease; box-shadow: 0 0 30px rgba(0, 0, 0, .35); border-right: 0; }
+    .dossier.has-preview.pv-hide .pv-panel { display: flex; }
+    .dossier.pv-open .pv-panel { transform: none; }
+    .pv-sluit { display: inline-block; }
+  }
+  @media (max-width: 800px) { .dossier.has-preview { grid-template-columns: 1fr; } }
+  @media print {
+    .dossier.has-preview { display: block !important; }
+    .has-preview .side, .has-preview .main, .pv-head, .pv-noot { display: none !important; }
+    .dossier .pv-panel { display: block !important; position: static !important; transform: none !important; width: auto !important; height: auto !important; overflow: visible !important; box-shadow: none !important; border: 0 !important; }
+    .pv-doc { padding: 0; }
+    body { background: #fff; }
+  }
+  @media (prefers-reduced-motion: reduce) { .pv-panel { transition: none; } }
+
   /* werkblad */
   .btn {
     font: inherit; font-family: var(--display); font-weight: 500; font-size: .92rem;
@@ -854,6 +937,7 @@ function indSchrijf(id, st) {
   if (!ta) return;
   ta.value = JSON.stringify(st);
   ta.dataset.dirty = "1";
+  pvSchedule();
 }
 function indBuild(id) {
   const box = document.querySelector(`[data-ind="${id}"]`);
@@ -944,6 +1028,7 @@ function balSchrijf(id, st) {
   if (!ta) return;
   ta.value = JSON.stringify(st);
   ta.dataset.dirty = "1";
+  pvSchedule();
 }
 /* uren die een teamlid volgens het rooster in de praktijk werkt (zonder pauzes en opleidingsdag) */
 function teamUren(m) {
@@ -1115,10 +1200,513 @@ function balTeamlid(sel) {
   balBuild(id);
 }
 
-async function api(path, options = {}) {
+/* ---------- Extra bouwstenen uit de protocolbouwer (workshop 2 en 3) ---------- */
+const LW = {
+  "widget-contactmomenten": { item: "Contactmoment", knop: "Contactmoment toevoegen", velden: [
+    ["uitvoerder", "Uitvoerder", "discipline"], ["contactType", "Contacttype (fysiek, telefonisch, video…)", "tekst"],
+    ["anamnese", "Anamnese", "lang"], ["klinisch", "Klinisch onderzoek / acties", "lang"],
+    ["bespreking", "Bespreking", "lang"], ["planning", "Planning", "lang"],
+    ["communicatie", "Interne communicatie (EMD-registratie, mail, overleg…)", "lang"],
+    ["link", "Link naar procedure of website", "tekst"], ["aandacht", "Aandachtspunten / extra info", "lang"] ] },
+  "widget-populatie": { item: "Parameter", knop: "Parameter toevoegen", velden: [
+    ["parameter", "Parameter", "tekst"], ["streefdoel", "Streefdoel", "lang"],
+    ["oranje", "Oranje vlag (grenswaarde)", "tekst"], ["actieOranje", "Actie bij oranje vlag", "lang"],
+    ["rood", "Rode vlag (grenswaarde)", "tekst"], ["actieRood", "Actie bij rode vlag", "lang"],
+    ["link", "Link naar bron", "tekst"] ] },
+  "widget-extra": { item: "Onderdeel", knop: "Onderdeel toevoegen", velden: [
+    ["titel", "Titel van dit onderdeel", "tekst"], ["inhoud", "Inhoud", "lang"] ] },
+  "widget-logboek": { item: "Wijziging", knop: "Wijziging toevoegen", velden: [
+    ["datum", "Datum", "datum"], ["aanpassing", "Aanpassing(en)", "tekst"] ] },
+  "widget-bronnen-voorbeeld": { item: "Bron", knop: "Bron toevoegen", velden: [
+    ["titel", "Titel", "tekst"], ["info", "Andere info (praktijknaam, locatie…)", "tekst"], ["link", "Link", "tekst"] ] },
+  "widget-bronnen-andere": { item: "Bron", knop: "Bron toevoegen", velden: [
+    ["bron", "Bron", "tekst"], ["link", "Link", "tekst"], ["infoGebruikt", "Info die gebruikt werd", "tekst"] ] }
+};
+
+function widgetSoort(id) {
+  if (id.startsWith("widget-balans")) return { attr: "bal", bouw: balBuild };
+  if (id.startsWith("widget-indicatoren")) return { attr: "ind", bouw: indBuild };
+  if (id === "widget-voorblad") return { attr: "vb", bouw: vbBuild };
+  if (id === "widget-steekkaart") return { attr: "stk", bouw: stkBuild };
+  if (LW[id]) return { attr: "lw", bouw: lwBuild };
+  return null;
+}
+const wbWidgetLees = id => { const ta = document.getElementById("wb-" + id); let o = {}; try { o = JSON.parse(ta && ta.value ? ta.value : "{}"); } catch (e) { o = {}; } return o && typeof o === "object" ? o : {}; };
+function wbWidgetSchrijf(id, st) {
+  const ta = document.getElementById("wb-" + id);
+  if (!ta) return;
+  ta.value = JSON.stringify(st);
+  ta.dataset.dirty = "1";
+  pvSchedule();
+}
+
+/* lijst met kaarten (contactmomenten, populatie, extra onderdelen, logboek, bronnen) */
+const lwLeeg = sch => { const o = {}; sch.velden.forEach(v => { o[v[0]] = ""; }); return o; };
+function lwLees(id) {
+  const sch = LW[id], o = wbWidgetLees(id);
+  if (!Array.isArray(o.r)) return { r: [lwLeeg(sch)] };
+  return { r: o.r.map(x => { const rij = lwLeeg(sch); sch.velden.forEach(v => { if (x && x[v[0]] != null) rij[v[0]] = String(x[v[0]]); }); return rij; }) };
+}
+function lwBuild(id) {
+  const box = document.querySelector(`[data-lw="${id}"]`);
+  if (!box) return;
+  const sch = LW[id], st = lwLees(id);
+  const veld = (v, i, r) => {
+    const [k, label, type] = v, w = esc(r[k]), attr = `data-lw-r="${i}.${k}"`;
+    let inv;
+    if (type === "lang") inv = `<textarea rows="2" ${attr}>${w}</textarea>`;
+    else if (type === "datum") inv = `<input type="date" ${attr} value="${w}">`;
+    else if (type === "discipline") inv = `<input type="text" list="wb-disciplines" ${attr} value="${w}" placeholder="Kies of typ een discipline">`;
+    else inv = `<input type="text" ${attr} value="${w}">`;
+    return `<label class="${type === "lang" ? "breed" : ""}">${esc(label)}${inv}</label>`;
+  };
+  box.innerHTML = `${st.r.length ? "" : '<p class="muted">Nog niets toegevoegd.</p>'}
+    ${st.r.map((r, i) => `
+    <div class="lw-kaart">
+      <div class="lw-kop"><strong>${esc(sch.item)} ${i + 1}</strong>
+        <span class="lw-acties">
+          <button type="button" class="cardbtn" data-lw-act="up" data-i="${i}" aria-label="Naar boven"${i === 0 ? " disabled" : ""}>↑</button>
+          <button type="button" class="cardbtn" data-lw-act="down" data-i="${i}" aria-label="Naar onder"${i === st.r.length - 1 ? " disabled" : ""}>↓</button>
+          <button type="button" class="cardbtn danger" data-lw-act="del" data-i="${i}">Verwijder</button>
+        </span></div>
+      <div class="lw-velden">${sch.velden.map(v => veld(v, i, r)).join("")}</div>
+    </div>`).join("")}
+    <div class="bal-acties"><button type="button" class="btn secondary" data-lw-act="add">${esc(sch.knop)}</button></div>`;
+}
+function lwInput(el) {
+  const box = el.closest("[data-lw]");
+  if (!box) return;
+  const id = box.dataset.lw, st = lwLees(id);
+  const [i, k] = el.dataset.lwR.split(".");
+  if (st.r[Number(i)]) st.r[Number(i)][k] = el.value;
+  wbWidgetSchrijf(id, st);
+}
+function lwActie(el) {
+  const box = el.closest("[data-lw]");
+  if (!box) return;
+  const id = box.dataset.lw, st = lwLees(id), act = el.dataset.lwAct, i = Number(el.dataset.i);
+  if (act === "add") st.r.push(lwLeeg(LW[id]));
+  if (act === "del") st.r.splice(i, 1);
+  if (act === "up" && i > 0) [st.r[i - 1], st.r[i]] = [st.r[i], st.r[i - 1]];
+  if (act === "down" && i < st.r.length - 1) [st.r[i + 1], st.r[i]] = [st.r[i], st.r[i + 1]];
+  wbWidgetSchrijf(id, st);
+  lwBuild(id);
+}
+
+/* voorblad / samenvatting */
+const VB_STD = { p: "", t: "", d: "", v: "", s: "In opbouw", l: "", n: "", z: "" };
+const vbLees = id => Object.assign({}, VB_STD, wbWidgetLees(id));
+function vbBuild(id) {
+  const box = document.querySelector(`[data-vb="${id}"]`);
+  if (!box) return;
+  const st = vbLees(id), praktijk = PRACTICES.find(x => x.id === wb.praktijk);
+  const inp = (k, label, extra) => `<label>${label}<input type="text" data-vb-f="${k}" value="${esc(st[k])}" ${extra || ""}></label>`;
+  box.innerHTML = `<div class="vb-grid">
+    ${inp("p", "Praktijknaam", `placeholder="${esc(praktijk ? praktijk.naam : "")}"`)}
+    ${inp("t", "Titel van het protocol", 'placeholder="bv. Protocol diabeteszorg"')}
+    <label class="breed">Doelgroep (korte omschrijving voor het voorblad)<input type="text" data-vb-f="d" value="${esc(st.d)}"></label>
+    <label>Status van het protocol<select data-vb-f="s">${["In opbouw", "Actueel", "Revisie nodig"].map(o => `<option${st.s === o ? " selected" : ""}>${o}</option>`).join("")}</select></label>
+    ${inp("v", "Verantwoordelijke")}
+    <label>Laatste herziening<input type="date" data-vb-f="l" value="${esc(st.l)}"></label>
+    <label>Volgende herziening<input type="date" data-vb-f="n" value="${esc(st.n)}"></label>
+    <label class="breed">Intern zorgteam (enkel disciplines, geen namen, gescheiden door komma’s)<input type="text" data-vb-f="z" value="${esc(st.z)}" placeholder="bv. huisarts, verpleegkundige, diëtist"></label>
+  </div>`;
+}
+function vbInput(el) {
+  const box = el.closest("[data-vb]");
+  if (!box) return;
+  const id = box.dataset.vb, st = vbLees(id);
+  st[el.dataset.vbF] = el.value;
+  wbWidgetSchrijf(id, st);
+}
+
+/* steekkaart: contactmomenten als kolommen, de vier fases als rijen */
+const stkLees = id => {
+  const o = wbWidgetLees(id);
+  const kol = Array.isArray(o.kol) && o.kol.length ? o.kol.map(c => ({ l: String(c && c.l != null ? c.l : ""), u: String(c && c.u != null ? c.u : "") })) : [{ l: "", u: "" }];
+  return { kol, m: o.m && typeof o.m === "object" ? o.m : {} };
+};
+const stkKop = (c, i) => `${esc(c.l || "Contactmoment " + (i + 1))}${c.u ? `<small>${esc(c.u)}</small>` : ""}`;
+function stkBuild(id) {
+  const box = document.querySelector(`[data-stk="${id}"]`);
+  if (!box) return;
+  const st = stkLees(id);
+  box.innerHTML = `
+    <table class="lw-tab"><thead><tr><th>Naam contactmoment</th><th>Uitvoerder</th><th><span class="sr-only">Verwijderen</span></th></tr></thead><tbody>
+    ${st.kol.map((c, i) => `<tr>
+      <td><input type="text" data-stk-k="${i}.l" value="${esc(c.l)}" placeholder="bv. Intake"></td>
+      <td><input type="text" list="wb-disciplines" data-stk-k="${i}.u" value="${esc(c.u)}" placeholder="Discipline"></td>
+      <td><button type="button" class="bal-del" data-stk-act="del" data-i="${i}" aria-label="Contactmoment ${i + 1} verwijderen">×</button></td></tr>`).join("")}
+    </tbody></table>
+    <div class="bal-acties"><button type="button" class="btn secondary" data-stk-act="add">Contactmoment toevoegen</button></div>
+    <div class="bal-scroll"><table class="lw-tab stk-matrix"><thead><tr><th>Fase</th>${st.kol.map((c, i) => `<th data-stk-th="${i}">${stkKop(c, i)}</th>`).join("")}</tr></thead><tbody>
+    ${PV_FASES.map((f, fi) => `<tr><th scope="row">${esc(f)}</th>${st.kol.map((c, ci) => `<td><textarea rows="2" data-stk-c="${fi}-${ci}" aria-label="${esc(f)}, contactmoment ${ci + 1}">${esc(st.m[fi + "-" + ci] || "")}</textarea></td>`).join("")}</tr>`).join("")}
+    </tbody></table></div>`;
+}
+function stkInput(el) {
+  const box = el.closest("[data-stk]");
+  if (!box) return;
+  const id = box.dataset.stk, st = stkLees(id);
+  if (el.dataset.stkK !== undefined) {
+    const [i, k] = el.dataset.stkK.split(".");
+    if (st.kol[Number(i)]) st.kol[Number(i)][k] = el.value;
+    const th = box.querySelector(`[data-stk-th="${i}"]`);
+    if (th) th.innerHTML = stkKop(st.kol[Number(i)], Number(i));
+  } else if (el.dataset.stkC !== undefined) {
+    st.m[el.dataset.stkC] = el.value;
+  }
+  wbWidgetSchrijf(id, st);
+}
+function stkActie(el) {
+  const box = el.closest("[data-stk]");
+  if (!box) return;
+  const id = box.dataset.stk, st = stkLees(id), act = el.dataset.stkAct, i = Number(el.dataset.i);
+  if (act === "add") st.kol.push({ l: "", u: "" });
+  if (act === "del") {
+    const nm = {};
+    Object.keys(st.m).forEach(key => {
+      const [fi, ci] = key.split("-").map(Number);
+      if (ci !== i) nm[`${fi}-${ci > i ? ci - 1 : ci}`] = st.m[key];
+    });
+    st.m = nm;
+    st.kol.splice(i, 1);
+    if (!st.kol.length) st.kol.push({ l: "", u: "" });
+  }
+  wbWidgetSchrijf(id, st);
+  stkBuild(id);
+}
+
+/* =====================================================================
+   VOORBEELD VAN HET PROTOCOL
+   Wordt live opgebouwd uit de antwoorden op de werkbladen, in dezelfde opbouw
+   en opmaak als de protocolbouwer. Het HTML-bestand dat je downloadt bevat de
+   brongegevens en kan in de protocolbouwer opnieuw worden opgeladen.
+   ===================================================================== */
+const PV_FASES = ["Anamnese", "Klinisch onderzoek / actie", "Bespreking / planning", "Telefonische opvolging (zo nodig)"];
+/* welke vraag van het werkblad hoort bij welke rol in "Visie op de rolbeschrijving" */
+const PV_ROLLEN = [["spec2-2", "Huisarts"], ["spec2-3", "Huisarts in opleiding (HAIO)"], ["spec2-4", "Verpleegkundige"], ["spec2-5", "Andere disciplines"]];
+const pv = { server: {}, ids: new Set(), timer: null, state: null };
+
+const pvEsc = s => (s == null ? "" : String(s)).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const pvDate = s => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ""); return m ? `${m[3]}/${m[2]}/${m[1]}` : (s || ""); };
+const pvGetal = x => { const n = balNum(x); return n ? balFmt(n) : String(x == null ? "" : x); };
+const pvGetalStr = x => { const n = balNum(x); return n ? String(n) : String(x == null ? "" : x).trim(); };
+const pvKnip = (t, n) => { const x = String(t || "").replace(/\s+/g, " ").trim(); return x.length > n ? x.slice(0, n - 1).trimEnd() + "…" : x; };
+const pvFl = (label, val) => `<table class="fl"><tr><td class="fll">${label}</td><td>${val ? pvEsc(val) : '<span class="empty">nog niet ingevuld</span>'}</td></tr></table>`;
+const pvFree = val => `<div class="freetext">${val ? pvEsc(val) : '<span class="empty">nog niet ingevuld</span>'}</div>`;
+const pvTbl = (headers, rows) => (!rows || !rows.length)
+  ? '<p class="empty">Nog niets toegevoegd.</p>'
+  : `<table><thead><tr>${headers.map(x => `<th>${x}</th>`).join("")}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c ? pvEsc(c) : ""}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+
+/* dezelfde structuur als de protocolbouwer, zodat het bestand daar opnieuw geopend kan worden */
+function pvLeegState() {
+  return {
+    include: { steekkaart: true, contactmomenten: true, populatie: true, extra: true, logboek: true, bronnen: true,
+      noodzaak: true, doelstelling: true, doelgroep: true, inclusie: true, volumeBalans: true, visieRol: true, regionaal: true, procesevaluatie: true },
+    voorblad: { praktijknaam: "", titelProtocol: "", doelgroepKort: "", verantwoordelijke: "", status: "In opbouw", laatsteHerziening: "", volgendeHerziening: "", zorgteam: [] },
+    steekkaart: { kolommen: [], matrix: {} },
+    contactmomenten: [], populatie: [], extraOnderdelen: [], logboek: [], bronnenVoorbeeld: [], bronnenAndere: [],
+    noodzaak: "",
+    doelstelling: { tekst: "", smart: { specifiek: { done: false, tekst: "" }, meetbaar: { done: false, tekst: "" }, acceptabel: { done: false, tekst: "" }, realistisch: { done: false, tekst: "" }, tijdsgebonden: { done: false, tekst: "" } } },
+    doelgroep: { omschrijving: "", aantal: "", beschrijving: "" },
+    inclusie: "",
+    volumeBalans: { urenPerPatient: "", resources: [], haalbaarheid: "" },
+    visieRol: { visie: "", rollen: [] },
+    procesevaluatie: [],
+    regionaleZorgsystemen: ""
+  };
+}
+
+function pvJson(ant, id) {
+  try { const o = JSON.parse(ant[id] || "{}"); return o && typeof o === "object" ? o : {}; } catch (e) { return {}; }
+}
+const pvHeeft = r => Object.values(r).some(x => String(x).trim());
+
+/* antwoorden van de werkbladen omzetten naar de structuur van de protocolbouwer */
+function pvBouwState(p, ant, ids) {
+  const has = id => ids.has(id);
+  const t = id => String(ant[id] == null ? "" : ant[id]).trim();
+  const lijst = id => { const o = pvJson(ant, id); return (Array.isArray(o.r) ? o.r : []).filter(pvHeeft).map(r => Object.assign({}, r)); };
+  const s = pvLeegState(), inc = s.include;
+
+  const vb = Object.assign({}, VB_STD, pvJson(ant, "widget-voorblad"));
+  const bal = balNormaliseer(pvJson(ant, "widget-balans"));
+  const discip = [...new Set(bal.r.map(r => r.d.trim()).filter(Boolean))];
+
+  s.voorblad.praktijknaam = String(vb.p).trim() || (p ? p.naam : "");
+  s.voorblad.titelProtocol = String(vb.t).trim() || (t("aanv-2") ? "Protocol: " + pvKnip(t("aanv-2"), 70) : "");
+  s.voorblad.doelgroepKort = String(vb.d).trim() || pvKnip(t("spec1-1"), 120);
+  s.voorblad.verantwoordelijke = String(vb.v).trim();
+  s.voorblad.status = vb.s || "In opbouw";
+  s.voorblad.laatsteHerziening = vb.l || "";
+  s.voorblad.volgendeHerziening = vb.n || "";
+  const team = String(vb.z).split(",").map(x => x.trim()).filter(Boolean);
+  s.voorblad.zorgteam = team.length ? team : discip;
+
+  // Waarom? en doelstelling
+  s.noodzaak = t("aanv-1");                  inc.noodzaak = has("aanv-1");
+  s.doelstelling.tekst = t("aanv-3");        inc.doelstelling = has("aanv-3");
+  // doelgroep, volume en resources
+  s.doelgroep.omschrijving = t("spec1-1");
+  s.doelgroep.aantal = pvGetalStr(bal.v.n) || t("spec1-2");
+  inc.doelgroep = has("spec1-1") || has("spec1-2");
+  s.volumeBalans.urenPerPatient = pvGetalStr(bal.v.u) || t("spec1-3");
+  s.volumeBalans.resources = bal.r.filter(r => r.d.trim() || r.a.trim() || r.h.trim()).map(r => ({ discipline: r.d, aantal: pvGetalStr(r.a), uurWeek: pvGetalStr(r.h) }));
+  s.volumeBalans.haalbaarheid = { niet: "Niet haalbaar", weetniet: "Ik weet het niet", haalbaar: "Haalbaar" }[bal.o] || "";
+  inc.volumeBalans = has("widget-balans") || has("spec1-3");
+  // taakverdeling
+  s.visieRol.visie = t("spec2-1");
+  s.visieRol.rollen = PV_ROLLEN.filter(([id]) => t(id)).map(([id, naam]) => ({ discipline: naam, rolEnTaken: t(id) }));
+  inc.visieRol = has("spec2-1") || PV_ROLLEN.some(([id]) => has(id));
+  // indicatoren (meetbaar)
+  const ind = indNormaliseer(pvJson(ant, "widget-indicatoren"));
+  s.procesevaluatie = ind.r.filter(r => r.s || r.i.trim() || r.d.trim() || r.m.trim()).map(r => ({
+    indicator: (r.s ? IND_SOORTEN[r.s] + "indicator: " : "") + r.i, streefdoel: r.d, basismeting: "", resultaat: "",
+    opmerkingen: r.m ? "Wordt gemeten: " + r.m : "", link: "" }));
+  inc.procesevaluatie = has("widget-indicatoren");
+  // inclusie en regionale context
+  s.inclusie = t("inclusie");                          inc.inclusie = has("inclusie");
+  s.regionaleZorgsystemen = t("regionaal");            inc.regionaal = has("regionaal");
+  // het protocol zelf
+  const stk = pvJson(ant, "widget-steekkaart");
+  const kol = Array.isArray(stk.kol) ? stk.kol : [], mat = stk.m && typeof stk.m === "object" ? stk.m : {};
+  const stkIets = kol.some(c => c && (String(c.l || "").trim() || String(c.u || "").trim())) || Object.values(mat).some(x => String(x).trim());
+  s.steekkaart.kolommen = stkIets ? kol.map(c => ({ label: String((c && c.l) || ""), uitvoerder: String((c && c.u) || "") })) : [];
+  s.steekkaart.matrix = stkIets ? mat : {};
+  inc.steekkaart = has("widget-steekkaart");
+  s.contactmomenten = lijst("widget-contactmomenten");   inc.contactmomenten = has("widget-contactmomenten");
+  s.populatie = lijst("widget-populatie");               inc.populatie = has("widget-populatie");
+  s.extraOnderdelen = lijst("widget-extra");             inc.extra = has("widget-extra");
+  s.logboek = lijst("widget-logboek");                   inc.logboek = has("widget-logboek");
+  s.bronnenVoorbeeld = lijst("widget-bronnen-voorbeeld");
+  s.bronnenAndere = lijst("widget-bronnen-andere");
+  inc.bronnen = has("widget-bronnen-voorbeeld") || has("widget-bronnen-andere");
+  return s;
+}
+
+/* het document: voorblad, inhoudstafel en de drie delen */
+function pvDocHtml(s, exp) {
+  const v = s.voorblad, inc = s.include;
+  const link = (id, label) => exp ? `<a href="#${id}">${label}</a>` : `<a href="#" data-pv-goto="${id}">${label}</a>`;
+  const toc = arr => arr.map((e, i) => link(e[0], `${i + 1}. ${e[1]}`)).join("");
+  const statusClass = { "In opbouw": "st-opbouw", "Actueel": "st-actueel", "Revisie nodig": "st-revisie" }[v.status] || "st-opbouw";
+
+  const prot = [];
+  if (inc.steekkaart) prot.push(["sec-steekkaart", "Steekkaart"]);
+  if (inc.contactmomenten) prot.push(["sec-contactmomenten", "Contactmomenten"]);
+  if (inc.populatie) prot.push(["sec-populatie", "Populatie-streefdoelen"]);
+  if (inc.extra) s.extraOnderdelen.forEach((o, i) => prot.push([`sec-extra-${i}`, pvEsc(o.titel) || "Naamloos onderdeel"]));
+  const beheer = [];
+  if (inc.logboek) beheer.push(["sec-logboek", "Logboek"]);
+  if (inc.bronnen) beheer.push(["sec-bronnen", "Bronnen"]);
+  const basis = [];
+  if (inc.noodzaak) basis.push(["sec-noodzaak", "Waarom?"]);
+  if (inc.doelstelling) basis.push(["sec-doelstelling", "De doelstelling"]);
+  if (inc.doelgroep) basis.push(["sec-doelgroep", "De doelgroep"]);
+  if (inc.inclusie) basis.push(["sec-inclusie", "Inclusie in het protocol"]);
+  if (inc.volumeBalans) basis.push(["sec-volumebalans", "Volume/resource-balans"]);
+  if (inc.visieRol) basis.push(["sec-visierol", "Visie op de rolbeschrijving"]);
+  if (inc.regionaal) basis.push(["sec-regionaal", "Regionale zorgplannen / zorgsystemen"]);
+  if (inc.procesevaluatie) basis.push(["sec-procesevaluatie", "Evaluatie van het protocol (indicatoren)"]);
+
+  let h = `<div class="pv-cover">
+    <div class="pv-cover-top"><p class="pvname">${pvEsc(v.praktijknaam) || "Naamloze praktijk"}</p><span class="status-badge ${statusClass}">${pvEsc(v.status) || "In opbouw"}</span></div>
+    <p class="pvtitle">${pvEsc(v.titelProtocol) || "Titel van het protocol"}</p>
+    <div class="pvmeta">
+      <div><b>Doelgroep:</b> ${pvEsc(v.doelgroepKort) || "—"}</div>
+      <div><b>Verantwoordelijke:</b> ${pvEsc(v.verantwoordelijke) || "—"}</div>
+      <div><b>Laatste herziening:</b> ${pvEsc(pvDate(v.laatsteHerziening)) || "—"}</div>
+      <div><b>Volgende herziening:</b> ${pvEsc(pvDate(v.volgendeHerziening)) || "—"}</div>
+      <div class="pv-wide"><b>Intern zorgteam:</b> ${v.zorgteam.length ? pvEsc(v.zorgteam.join(", ")) : "—"}</div>
+    </div></div>`;
+  if (prot.length || beheer.length || basis.length) {
+    h += `<div class="toc">${prot.length ? `<div class="toc-group">Het protocol</div>${toc(prot)}` : ""}${beheer.length ? `<div class="toc-group">Logboek &amp; bronnen</div>${toc(beheer)}` : ""}${basis.length ? `<div class="toc-group">Basis voor de ontwikkeling van dit protocol</div>${toc(basis)}` : ""}</div>`;
+  } else {
+    h += '<p class="empty">Zodra jullie een werkblad invullen, groeit hier het protocol.</p>';
+  }
+
+  if (prot.length) {
+    h += '<h2 id="sec-protocol">Het protocol</h2>';
+    let n = 0;
+    if (inc.steekkaart) {
+      n++; h += `<h3 id="sec-steekkaart">${n}. Steekkaart</h3>`;
+      if (s.steekkaart.kolommen.length) {
+        h += `<table><thead><tr><th>Fase</th>${s.steekkaart.kolommen.map(c => `<th>${pvEsc(c.label)}${c.uitvoerder ? "<br>" + pvEsc(c.uitvoerder) : ""}</th>`).join("")}</tr></thead><tbody>`;
+        PV_FASES.forEach((f, fi) => { h += `<tr><td><b>${f}</b></td>${s.steekkaart.kolommen.map((c, ci) => `<td>${pvEsc(s.steekkaart.matrix[fi + "-" + ci] || "")}</td>`).join("")}</tr>`; });
+        h += "</tbody></table>";
+      } else h += '<p class="empty">Nog geen contactmomenten toegevoegd aan de steekkaart.</p>';
+    }
+    if (inc.contactmomenten) {
+      n++; h += `<h3 id="sec-contactmomenten">${n}. Contactmomenten</h3>`;
+      if (!s.contactmomenten.length) h += '<p class="empty">Nog geen contactmomenten uitgewerkt.</p>';
+      s.contactmomenten.forEach((c, i) => {
+        h += `<h3 class="sub">Contactmoment ${i + 1} — ${pvEsc(c.uitvoerder) || "?"} (${pvEsc(c.contactType) || "?"})</h3>`;
+        h += pvTbl(["Fase", "Actie / info"], [["Anamnese", c.anamnese], ["Klinisch onderzoek/acties", c.klinisch], ["Bespreking", c.bespreking], ["Planning", c.planning],
+          ["Interne communicatie", c.communicatie], ["Link naar procedure", c.link], ["Aandachtspunten", c.aandacht]]);
+      });
+    }
+    if (inc.populatie) {
+      n++; h += `<h3 id="sec-populatie">${n}. Populatie-streefdoelen</h3>`;
+      h += pvTbl(["Parameter", "Streefdoel", "Oranje vlag", "Actie bij oranje vlag", "Rode vlag", "Actie bij rode vlag", "Link"],
+        s.populatie.map(r => [r.parameter, r.streefdoel, r.oranje, r.actieOranje, r.rood, r.actieRood, r.link]));
+    }
+    if (inc.extra) s.extraOnderdelen.forEach((o, i) => { n++; h += `<h3 id="sec-extra-${i}">${n}. ${pvEsc(o.titel) || "Naamloos onderdeel"}</h3>` + pvFree(o.inhoud); });
+  }
+
+  if (beheer.length) {
+    h += '<h2 id="sec-beheer">Logboek &amp; bronnen</h2>';
+    let n = 0;
+    if (inc.logboek) { n++; h += `<h3 id="sec-logboek">${n}. Logboek</h3>` + pvTbl(["Datum", "Aanpassing(en)"], s.logboek.map(r => [pvDate(r.datum), r.aanpassing])); }
+    if (inc.bronnen) {
+      n++; h += `<h3 id="sec-bronnen">${n}. Bronnen</h3>`;
+      h += '<p class="pv-minikop">Protocol gebruikt als voorbeeld/inspiratie</p>' + pvTbl(["Titel", "Andere info", "Link"], s.bronnenVoorbeeld.map(r => [r.titel, r.info, r.link]));
+      h += '<p class="pv-minikop">Andere bronnen</p>' + pvTbl(["Bron", "Link", "Info gebruikt"], s.bronnenAndere.map(r => [r.bron, r.link, r.infoGebruikt]));
+    }
+  }
+
+  if (basis.length) {
+    h += '<h2 id="sec-basis">Basis voor de ontwikkeling van dit protocol</h2>';
+    let n = 0;
+    if (inc.noodzaak) { n++; h += `<h3 id="sec-noodzaak">${n}. Waarom?</h3>` + pvFree(s.noodzaak); }
+    if (inc.doelstelling) { n++; h += `<h3 id="sec-doelstelling">${n}. De doelstelling</h3>` + pvFree(s.doelstelling.tekst); }
+    if (inc.doelgroep) {
+      n++; h += `<h3 id="sec-doelgroep">${n}. De doelgroep</h3>` + pvFree(s.doelgroep.omschrijving);
+      h += pvFl("Aantal patiënten in de doelgroep", pvGetal(s.doelgroep.aantal));
+    }
+    if (inc.inclusie) { n++; h += `<h3 id="sec-inclusie">${n}. Inclusie in het protocol</h3>` + pvFree(s.inclusie); }
+    if (inc.volumeBalans) {
+      n++; h += `<h3 id="sec-volumebalans">${n}. Volume/resource-balans</h3>`;
+      const vraag = balNum(s.doelgroep.aantal) * balNum(s.volumeBalans.urenPerPatient);
+      let cap = 0; s.volumeBalans.resources.forEach(r => { cap += balNum(r.aantal) * balNum(r.uurWeek) * BAL_WEKEN; });
+      h += pvFl("Verwacht uur/jaar per patiënt", pvGetal(s.volumeBalans.urenPerPatient));
+      h += pvTbl(["Discipline", "Aantal", "Uur/week"], s.volumeBalans.resources.map(r => [r.discipline, pvGetal(r.aantal), pvGetal(r.uurWeek)]));
+      h += pvFl("Totale zorgvraag", vraag ? balFmt(Math.round(vraag)) + " u/jaar" : "");
+      h += pvFl(`Totale capaciteit (o.b.v. ${BAL_WEKEN} werkweken/jaar)`, cap ? balFmt(Math.round(cap)) + " u/jaar" : "");
+      h += pvFl("Inschatting haalbaarheid", s.volumeBalans.haalbaarheid);
+    }
+    if (inc.visieRol) {
+      n++; h += `<h3 id="sec-visierol">${n}. Visie op de rolbeschrijving</h3>` + pvFree(s.visieRol.visie);
+      h += pvTbl(["Discipline", "Rol en taken"], s.visieRol.rollen.map(r => [r.discipline, r.rolEnTaken]));
+    }
+    if (inc.regionaal) { n++; h += `<h3 id="sec-regionaal">${n}. Regionale zorgplannen / zorgsystemen</h3>` + pvFree(s.regionaleZorgsystemen); }
+    if (inc.procesevaluatie) {
+      n++; h += `<h3 id="sec-procesevaluatie">${n}. Evaluatie van het protocol (indicatoren)</h3>`;
+      h += pvTbl(["Indicator", "Streefdoel", "Basismeting", "Resultaat", "Opmerkingen", "Link"], s.procesevaluatie.map(r => [r.indicator, r.streefdoel, r.basismeting, r.resultaat, r.opmerkingen, r.link]));
+    }
+  }
+  return h;
+}
+
+/* antwoorden verzamelen: wat al is opgeslagen (alle geopende workshops) plus wat nu op het scherm staat */
+function pvAntwoorden() {
+  const ant = Object.assign({}, pv.server), ids = new Set(pv.ids);
+  document.querySelectorAll("#wb-root .wb-card > textarea[id^=wb-], #wb-root .wb-card > input[type=hidden][id^=wb-]").forEach(el => {
+    const id = el.id.slice(3);
+    ids.add(id);
+    ant[id] = el.value;
+  });
+  return { ant, ids };
+}
+function pvUpdate() {
+  const doc = document.getElementById("pv-doc");
+  if (!doc) return;
+  const p = PRACTICES.find(x => x.id === wb.praktijk);
+  if (!p) return;
+  const { ant, ids } = pvAntwoorden();
+  pv.state = pvBouwState(p, ant, ids);
+  doc.innerHTML = pvDocHtml(pv.state, false);
+}
+function pvSchedule() {
+  clearTimeout(pv.timer);
+  pv.timer = setTimeout(pvUpdate, 200);
+}
+/* opgeslagen antwoorden van alle workshops die in deze sessie zijn geopend ophalen */
+async function pvLaad() {
+  const id = wb.praktijk;
+  if (!id || !API_URL) { pvUpdate(); return; }
+  const server = {}, ids = new Set();
+  for (const n of [1, 2, 3]) {
+    const pw = n === wb.nr ? wb.pw : wbStore.get("wb-pw-" + n);
+    if (!pw) continue;
+    try {
+      const data = await api(`/api/werkblad?workshop=${n}&praktijk=${encodeURIComponent(id)}`, {}, pw);
+      data.opdrachten.forEach(o => { ids.add(o.id); const a = data.antwoorden[o.id]; if (a) server[o.id] = a.antwoord; });
+    } catch (e) {
+      if (e.status === 401 && n !== wb.nr) wbStore.del("wb-pw-" + n);
+    }
+  }
+  if (wb.praktijk !== id) return;
+  pv.server = server; pv.ids = ids;
+  pvUpdate();
+}
+
+/* export */
+function pvStandalone(body, state) {
+  const data = JSON.stringify(state).replace(/<\//g, "<\\/");
+  return `<!DOCTYPE html><html lang="nl"><head><meta charset="UTF-8"><title>Praktijkprotocol</title>
+<style>
+body{font-family:Georgia,'Times New Roman',serif;max-width:860px;margin:40px auto;padding:0 24px;color:#1E2A22;line-height:1.5;}
+h2{font-size:19px;border-bottom:2px solid #2F5D50;padding-bottom:6px;margin-top:32px;}
+h3{font-size:14.5px;color:#2F5D50;margin:16px 0 6px;} h3.sub{margin-top:10px;}
+table{width:100%;border-collapse:collapse;margin:8px 0 14px;font-size:12.5px;}
+th,td{border:1px solid #C9CFC0;padding:6px 8px;text-align:left;vertical-align:top;} th{background:#DEE8E2;}
+table.fl{border:none;margin:0;} table.fl td{border:none;padding:4px 0;} table.fl td.fll{width:230px;min-width:230px;font-weight:600;color:#2F5D50;padding-right:14px;}
+.freetext{margin:4px 0 14px;padding:2px 0 2px 14px;border-left:3px solid #DEE8E2;white-space:pre-line;}
+.empty{color:#999;font-style:italic;}
+.pv-cover{border:1px solid #C9CFC0;border-radius:6px;padding:18px;margin-bottom:22px;background:#F7F8F3;}
+.pv-cover-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.pvname{font-size:22px;margin:0 0 2px;} .pvtitle{font-size:16px;margin:0 0 10px;font-weight:600;}
+.pvmeta{font-size:12px;color:#4B5B50;display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;} .pv-wide{grid-column:1/-1;}
+.status-badge{font-size:11px;font-weight:700;padding:4px 11px;border-radius:20px;white-space:nowrap;}
+.st-opbouw{background:#F1E3CD;color:#B8874A;} .st-actueel{background:#DCEBE2;color:#3E7A5D;} .st-revisie{background:#F3DED8;color:#A6432E;}
+.toc{border:1px solid #C9CFC0;border-radius:6px;padding:12px 16px;background:#F7F8F3;font-size:12px;margin-bottom:8px;}
+.toc-group{font-weight:700;color:#2F5D50;margin:12px 0 3px;font-size:12px;} .toc-group:first-child{margin-top:0;}
+.toc a{display:block;color:#1E2A22;text-decoration:none;padding:4px 0 4px 12px;font-size:12.5px;border-left:2px solid transparent;}
+.toc a:hover{color:#2F5D50;border-left-color:#2F5D50;background:#DEE8E2;}
+.pv-minikop{font-size:12px;font-weight:600;color:#2F5D50;margin:8px 0 2px;}
+.reopen-note{font-size:11px;color:#8a8578;margin-top:36px;border-top:1px dotted #C9CFC0;padding-top:8px;}
+</style></head><body>${body}<p class="reopen-note">Dit bestand bevat de brongegevens van dit protocol en kan opnieuw opgeladen worden in de protocolbouwer om verder te bewerken.</p><script type="application/json" id="__protocol_state__">${data}<\/script></body></html>`;
+}
+function pvExportBestand() {
+  const p = PRACTICES.find(x => x.id === wb.praktijk);
+  const { ant, ids } = pvAntwoorden();
+  const s = pvBouwState(p, ant, ids);
+  const slug = t => String(t || "").trim().replace(/[^a-zA-Z0-9À-ÿ\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-").toLowerCase();
+  const naam = [slug(s.voorblad.titelProtocol) || "praktijkprotocol", slug(s.voorblad.praktijknaam)].filter(Boolean).join("-") + ".html";
+  return { naam, inhoud: pvStandalone(pvDocHtml(s, true), s) };
+}
+function pvDownload() {
+  const b = pvExportBestand();
+  const url = URL.createObjectURL(new Blob([b.inhoud], { type: "text/html" }));
+  const a = document.createElement("a");
+  a.href = url; a.download = b.naam;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function pvToggle() {
+  const dossier = document.querySelector(".dossier.has-preview");
+  if (!dossier) return;
+  if (window.matchMedia("(min-width: 1450px)").matches) dossier.classList.toggle("pv-hide");
+  else dossier.classList.toggle("pv-open");
+}
+const pvPanelHtml = () => `
+  <aside class="pv-panel" id="pv-panel" aria-label="Voorbeeld van het protocol">
+    <div class="pv-head">
+      <strong>Voorbeeld van het protocol</strong>
+      <span class="pv-acties">
+        <button type="button" class="btn secondary" data-pv-act="html" title="Downloaden als HTML (kan in de protocolbouwer worden opgeladen)">HTML</button>
+        <button type="button" class="btn" data-pv-act="pdf" title="Afdrukken of opslaan als PDF">PDF</button>
+        <button type="button" class="btn secondary pv-sluit" data-pv-act="toggle" aria-label="Voorbeeld sluiten">✕</button>
+      </span>
+    </div>
+    <p class="pv-noot">Dit voorbeeld groeit mee met jullie antwoorden, ook met tekst die nog niet is opgeslagen. Vergeet niet op te slaan voor je naar een ander werkblad gaat. Onderdelen uit workshops die jullie nog niet geopend hebben, verschijnen later.</p>
+    <div class="pv-doc" id="pv-doc"></div>
+  </aside>`;
+
+async function api(path, options = {}, pw) {
   const res = await fetch(API_URL.replace(/\/$/, "") + path, {
     ...options,
-    headers: { "Content-Type": "application/json", "X-Wachtwoord": wb.pw || "", ...(options.headers || {}) }
+    headers: { "Content-Type": "application/json", "X-Wachtwoord": (pw !== undefined ? pw : wb.pw) || "", ...(options.headers || {}) }
   });
   let data = null;
   try { data = await res.json(); } catch (e) { /* lege respons */ }
@@ -1140,7 +1728,7 @@ function wbStatus(tekst, soort) {
 
 function wbStartPolling() {
   clearInterval(wbTimer);
-  wbTimer = setInterval(() => wbLoad({}), 20000);
+  wbTimer = setInterval(() => { wbLoad({}); pvLaad(); }, 20000);
 }
 
 function wbRenderLock() {
@@ -1159,10 +1747,12 @@ function initWerkblad(p, nr) {
   wb.naam = wbStore.get("wb-naam") || "";
   if (!API_URL) {
     wbStatus("De werkbladen zijn nog niet gekoppeld aan een database. Vul eerst API_URL in de code in.", "err");
+    pvUpdate();
     return;
   }
-  if (!wb.pw) { wbRenderLock(); return; }
+  if (!wb.pw) { wbRenderLock(); pvLaad(); return; }
   wbLoad({});
+  pvLaad();
   wbStartPolling();
 }
 
@@ -1186,6 +1776,7 @@ function wbKaart(q, thema, niveau, binnenwerk) {
 function wbBuild(data) {
   const root = wbRoot();
   const praktijk = PRACTICES.find(x => x.id === wb.praktijk);
+  const rollen = praktijk ? [...new Set(praktijk.team.map(m => m.rol.split(/[,(]/)[0].trim()))] : [];
   wb.ids = data.opdrachten.map(o => o.id);
   const sleutels = data.opdrachten.filter(o => o.id.startsWith("kop-")).map(o => smartSleutel(o.id)).filter(k => SMART[k]);
   const niveau = data.opdrachten.some(o => o.id.startsWith("kop-")) ? "h4" : "h3";
@@ -1193,13 +1784,14 @@ function wbBuild(data) {
   const delen = data.opdrachten.map(q => {
     if (q.id.startsWith("kop-")) { thema = SMART[smartSleutel(q.id)] || null; return wbKopHtml(q); }
     const id = esc(q.id);
-    let binnenwerk;
-    if (q.id.startsWith("widget-balans")) binnenwerk = `<input type="hidden" id="wb-${id}"><div class="bal" data-bal="${id}"></div>`;
-    else if (q.id.startsWith("widget-indicatoren")) binnenwerk = `<input type="hidden" id="wb-${id}"><div class="ind" data-ind="${id}"></div>`;
-    else binnenwerk = `<textarea id="wb-${id}" rows="5" placeholder="Nog niets ingevuld." aria-label="${esc(q.titel)}"></textarea>`;
+    const w = widgetSoort(q.id);
+    const binnenwerk = w
+      ? `<input type="hidden" id="wb-${id}"><div class="${w.attr}" data-${w.attr}="${id}"></div>`
+      : `<textarea id="wb-${id}" rows="5" placeholder="Nog niets ingevuld." aria-label="${esc(q.titel)}"></textarea>`;
     return wbKaart(q, thema, niveau, binnenwerk);
   });
   root.innerHTML = `
+    <datalist id="wb-disciplines">${rollen.map(r => `<option value="${esc(r)}">`).join("")}</datalist>
     <div class="wb-bar">
       <span class="wb-who">Werkblad workshop ${wb.nr}${praktijk ? " – " + esc(praktijk.naam) : ""}</span>
       <input id="wb-naaminput" type="text" maxlength="40" placeholder="Je naam (optioneel)" autocomplete="off" aria-label="Je naam (optioneel)">
@@ -1210,8 +1802,8 @@ function wbBuild(data) {
     ${delen.length ? delen.join("") : '<p class="muted">Voor deze workshop zijn nog geen opdrachten ingesteld.</p>'}`;
   const naam = document.getElementById("wb-naaminput");
   if (naam) naam.value = wb.naam;
-  data.opdrachten.filter(o => o.id.startsWith("widget-balans")).forEach(o => balBuild(o.id));
-  data.opdrachten.filter(o => o.id.startsWith("widget-indicatoren")).forEach(o => indBuild(o.id));
+  data.opdrachten.forEach(o => { const w = widgetSoort(o.id); if (w) w.bouw(o.id); });
+  pvSchedule();
 }
 
 function wbFill(data, opts) {
@@ -1228,10 +1820,9 @@ function wbFill(data, opts) {
       const veranderd = ta.value !== nieuweWaarde;
       ta.value = nieuweWaarde;
       delete ta.dataset.dirty;
-      const wBox = document.querySelector(`[data-bal="${q.id}"], [data-ind="${q.id}"]`);
-      if (wBox && (veranderd || wBox.childElementCount === 0)) {
-        if (q.id.startsWith("widget-balans")) balBuild(q.id); else indBuild(q.id);
-      }
+      const w = widgetSoort(q.id);
+      const wBox = w ? document.querySelector(`[data-${w.attr}="${q.id}"]`) : null;
+      if (wBox && (veranderd || wBox.childElementCount === 0)) w.bouw(q.id);
       wb.versies[q.id] = remote;
       if (msg) msg.textContent = "";
       if (reload) reload.hidden = true;
@@ -1287,6 +1878,7 @@ async function wbSave(qid) {
     delete ta.dataset.dirty;
     if (reload) reload.hidden = true;
     msg.textContent = "Opgeslagen ✓";
+    pvLaad();
     const meta = document.getElementById("wb-when-" + qid);
     if (meta) meta.textContent = "Laatst aangepast" + (wb.naam ? " door " + wb.naam : "") + " op " + wbDatum(res.bijgewerkt_op);
   } catch (e) {
@@ -1313,7 +1905,7 @@ async function wbAction(act, q) {
   if (act === "lock") {
     clearInterval(wbTimer);
     wb.pw = null; wb.loaded = false; wbStore.del("wb-pw-" + wb.nr);
-    wbStatus(""); wbRenderLock();
+    wbStatus(""); wbRenderLock(); pvLaad();
     return;
   }
   if (act === "unlock") {
@@ -1321,7 +1913,7 @@ async function wbAction(act, q) {
     if (!pw) { wbStatus("Vul het wachtwoord in.", "err"); return; }
     wb.pw = pw;
     await wbLoad({ unlock: true });
-    if (wb.pw) { wbStore.set("wb-pw-" + wb.nr, wb.pw); wbStartPolling(); }
+    if (wb.pw) { wbStore.set("wb-pw-" + wb.nr, wb.pw); wbStartPolling(); pvLaad(); }
   }
 }
 
@@ -1491,7 +2083,7 @@ function renderDossier(p, topicId) {
   const topic = TOPICS.find(t => t.id === topicId) || TOPICS[0];
   document.title = `${topic.titel} – ${p.naam}`;
   app.innerHTML = `
-    <div class="dossier ${p.cls}">
+    <div class="dossier ${p.cls}${topic.ws ? " has-preview" : ""}">
       <aside class="side">
         <a class="back" href="#/" data-nav="/">‹ Alle dossiers</a>
         <div>
@@ -1505,8 +2097,10 @@ function renderDossier(p, topicId) {
           </ul>
         </nav>
       </aside>
+      ${topic.ws ? pvPanelHtml() : ""}
       <main class="main">
         <div class="main-inner ${topic.id === 'team' || topic.ws ? 'wide' : ''}">
+          ${topic.ws ? '<button type="button" class="btn secondary pv-toggle" data-pv-act="toggle">Voorbeeld van het protocol tonen of verbergen</button>' : ""}
           <h2 tabindex="-1" id="topic-title">${topic.titel}</h2>
           ${RENDERERS[topic.id](p)}
         </div>
@@ -1542,6 +2136,24 @@ function navigate(path) {
 document.addEventListener("click", e => {
   const el = e.target.closest ? e.target : e.target.parentElement;
   if (!el) return;
+
+  const pvAct = el.closest("[data-pv-act]");
+  if (pvAct) {
+    const a = pvAct.dataset.pvAct;
+    if (a === "toggle") pvToggle(); else if (a === "pdf") window.print(); else if (a === "html") pvDownload();
+    return;
+  }
+  const pvGo = el.closest("[data-pv-goto]");
+  if (pvGo) {
+    e.preventDefault();
+    const doel = document.getElementById(pvGo.dataset.pvGoto);
+    if (doel && doel.scrollIntoView) doel.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+  const lwEl = el.closest("[data-lw-act]");
+  if (lwEl) { lwActie(lwEl); return; }
+  const stkEl = el.closest("[data-stk-act]");
+  if (stkEl) { stkActie(stkEl); return; }
 
   const indEl = el.closest("[data-ind-act]");
   if (indEl) { indActie(indEl); return; }
@@ -1579,6 +2191,10 @@ document.addEventListener("input", e => {
   if (e.target.id === "wb-naaminput") { wb.naam = e.target.value.trim(); wbStore.set("wb-naam", wb.naam); }
   if (e.target.dataset && (e.target.dataset.balF !== undefined || e.target.dataset.balR !== undefined)) balInput(e.target);
   if (e.target.dataset && e.target.dataset.indR !== undefined) indInput(e.target);
+  if (e.target.dataset && e.target.dataset.lwR !== undefined) lwInput(e.target);
+  if (e.target.dataset && e.target.dataset.vbF !== undefined) vbInput(e.target);
+  if (e.target.dataset && (e.target.dataset.stkK !== undefined || e.target.dataset.stkC !== undefined)) stkInput(e.target);
+  if (e.target.closest && e.target.closest("#wb-root")) pvSchedule();
 });
 document.addEventListener("change", e => {
   if (e.target.matches && e.target.matches("[data-bal-team]")) { balTeamlid(e.target); e.target.value = ""; }
