@@ -419,15 +419,23 @@
   .lw-tab th small { display: block; font-weight: 400; color: var(--ink-soft); }
   .lw-tab td { padding: .3rem .4rem; border: 1px solid var(--line); vertical-align: top; }
   .stk-matrix { min-width: 560px; }
+  .tk, .stk-ref { margin-top: .2rem; }
+  .tk-tab { min-width: 520px; }
+  .tk .lw-tab td.num, .lw-tab td.num { text-align: right; vertical-align: middle; white-space: nowrap; font-family: var(--display); font-weight: 500; background: color-mix(in srgb, var(--ink) 6%, var(--paper)); }
+  .tk input[type="text"], .tk select { width: 100%; min-width: 0; padding: .4rem .55rem; font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 6px; }
+  .stk-ref { padding: .6rem .9rem; border: 1px dashed var(--line); border-radius: 8px; background: color-mix(in srgb, var(--ink) 4%, var(--paper)); }
+  .stk-ref summary { cursor: pointer; font-family: var(--display); font-weight: 500; }
+  .stk-taken { margin: .5rem 0 0; padding-left: 1.2rem; font-size: .92rem; }
+  .stk-ref .muted { margin: .5rem 0 0; }
   @media (max-width: 700px) { .lw-velden, .vb-grid { grid-template-columns: 1fr; } }
 
   /* voorbeeld van het protocol */
-  .dossier.has-preview { grid-template-columns: 290px minmax(380px, 1.05fr) minmax(0, 1.3fr); }
+  .dossier.has-preview { grid-template-columns: 290px minmax(0, 1.3fr) minmax(380px, 1.05fr); }
   .dossier.has-preview.pv-hide { grid-template-columns: 290px 1fr; }
   .dossier.has-preview.pv-hide .pv-panel { display: none; }
   .has-preview .main-inner, .has-preview .main-inner.wide { max-width: 100%; }
   .has-preview .main { padding-left: clamp(1.2rem, 2.5vw, 2.5rem); padding-right: clamp(1.2rem, 2.5vw, 2.5rem); }
-  .pv-panel { position: sticky; top: 0; height: 100vh; overflow-y: auto; background: #fff; color: #1E2A22; border-right: 1px solid var(--line); display: flex; flex-direction: column; }
+  .pv-panel { position: sticky; top: 0; height: 100vh; overflow-y: auto; background: #fff; color: #1E2A22; border-left: 1px solid var(--line); display: flex; flex-direction: column; }
   .pv-head { position: sticky; top: 0; z-index: 2; display: flex; justify-content: space-between; align-items: center; gap: .6rem; flex-wrap: wrap; padding: .7rem 1rem; background: #DEE8E2; border-bottom: 1px solid #C9CFC0; font-family: var(--display); }
   .pv-head .btn { padding: .25rem .8rem; font-size: .85rem; }
   .pv-head .btn:not(.secondary) { background: #203F37; border-color: #203F37; color: #fff; }
@@ -465,7 +473,7 @@
   .pv-toggle { margin: 0 0 1rem; }
   @media (max-width: 1449px) {
     .dossier.has-preview { grid-template-columns: 290px 1fr; }
-    .pv-panel { position: fixed; left: 0; top: 0; bottom: 0; width: min(560px, 100%); height: auto; z-index: 50; transform: translateX(-105%); transition: transform .25s ease; box-shadow: 0 0 30px rgba(0, 0, 0, .35); border-right: 0; }
+    .pv-panel { position: fixed; right: 0; top: 0; bottom: 0; width: min(560px, 100%); height: auto; z-index: 50; transform: translateX(105%); transition: transform .25s ease; box-shadow: 0 0 30px rgba(0, 0, 0, .35); border-left: 0; }
     .dossier.has-preview.pv-hide .pv-panel { display: flex; }
     .dossier.pv-open .pv-panel { transform: none; }
     .pv-sluit { display: inline-block; }
@@ -1200,6 +1208,87 @@ function balTeamlid(sel) {
   balBuild(id);
 }
 
+/* ---------- Takenlijst: alle taken voor de doelgroep, met aantal keer per jaar ---------- */
+const TK_SOORTEN = ["Medisch", "Educatie", "Administratie", "Andere"];
+const tkLeeg = () => ({ t: "", s: "", n: "" });
+function tkLees(id) {
+  const o = wbWidgetLees(id);
+  if (!Array.isArray(o.r)) return { r: [tkLeeg(), tkLeeg(), tkLeeg(), tkLeeg(), tkLeeg()] };
+  return { r: o.r.map(x => ({ t: String(x && x.t != null ? x.t : ""), s: TK_SOORTEN.includes(x && x.s) ? x.s : "", n: String(x && x.n != null ? x.n : "") })) };
+}
+const TK_VOORBEELD = ["bv. bloedafname", "bv. bloeddrukmeting", "bv. resultaten meedelen aan de patiënt"];
+function tkBuild(id) {
+  const box = document.querySelector(`[data-tk="${id}"]`);
+  if (!box) return;
+  const st = tkLees(id);
+  box.innerHTML = `
+    <div class="bal-scroll"><table class="lw-tab tk-tab">
+      <thead><tr><th>Taak</th><th>Soort</th><th>Keer per jaar</th><th><span class="sr-only">Verwijderen</span></th></tr></thead>
+      <tbody>${st.r.map((r, i) => `<tr>
+        <td><input type="text" data-tk-r="${i}.t" value="${esc(r.t)}" placeholder="${esc(TK_VOORBEELD[i] || "")}" aria-label="Taak ${i + 1}"></td>
+        <td><select data-tk-r="${i}.s" aria-label="Soort taak ${i + 1}"><option value="">— kies —</option>${TK_SOORTEN.map(o => `<option${r.s === o ? " selected" : ""}>${o}</option>`).join("")}</select></td>
+        <td><input type="text" inputmode="decimal" data-tk-r="${i}.n" value="${esc(r.n)}" aria-label="Keer per jaar, taak ${i + 1}"></td>
+        <td><button type="button" class="bal-del" data-tk-act="del" data-i="${i}" aria-label="Taak ${i + 1} verwijderen">×</button></td>
+      </tr>`).join("")}</tbody>
+      <tfoot><tr><th colspan="2">Totaal aantal uitvoeringen per patiënt per jaar</th><td class="num" data-tk-tot>0</td><td></td></tr></tfoot>
+    </table></div>
+    <div class="bal-acties"><button type="button" class="btn secondary" data-tk-act="add">Taak toevoegen</button></div>
+    <p class="ind-som" data-tk-som role="status"></p>`;
+  tkBereken(id);
+}
+function tkBereken(id) {
+  const box = document.querySelector(`[data-tk="${id}"]`);
+  if (!box) return;
+  const st = tkLees(id);
+  let tot = 0;
+  const per = {};
+  st.r.forEach(r => {
+    if (!r.t.trim()) return;
+    const n = balNum(r.n);
+    tot += n;
+    const k = r.s || "Soort nog niet gekozen";
+    per[k] = per[k] || { taken: 0, keer: 0 };
+    per[k].taken++; per[k].keer += n;
+  });
+  const totEl = box.querySelector("[data-tk-tot]");
+  if (totEl) totEl.textContent = balFmt(tot);
+  const som = box.querySelector("[data-tk-som]");
+  if (som) som.textContent = Object.keys(per).map(k => `${k}: ${per[k].taken} ${per[k].taken === 1 ? "taak" : "taken"}, ${balFmt(per[k].keer)} keer per jaar`).join(" · ");
+}
+function tkSchrijf(id, st) {
+  wbWidgetSchrijf(id, st);
+  tkBereken(id);
+  stkTakenUpdate();
+}
+function tkInput(el) {
+  const box = el.closest("[data-tk]");
+  if (!box) return;
+  const id = box.dataset.tk, st = tkLees(id);
+  const [i, k] = el.dataset.tkR.split(".");
+  if (st.r[Number(i)]) st.r[Number(i)][k] = el.value;
+  tkSchrijf(id, st);
+}
+function tkActie(el) {
+  const box = el.closest("[data-tk]");
+  if (!box) return;
+  const id = box.dataset.tk, st = tkLees(id), act = el.dataset.tkAct;
+  if (act === "add") st.r.push(tkLeeg());
+  if (act === "del") { st.r.splice(Number(el.dataset.i), 1); if (!st.r.length) st.r.push(tkLeeg()); }
+  wbWidgetSchrijf(id, st);
+  tkBuild(id);
+  stkTakenUpdate();
+}
+/* de takenlijst als houvast bij de steekkaart */
+function stkTakenHtml() {
+  if (!document.getElementById("wb-widget-taken")) return "";
+  const rij = tkLees("widget-taken").r.filter(r => r.t.trim());
+  if (!rij.length) return '<p class="muted">Vul eerst de takenlijst hierboven in. Die verschijnt hier als houvast.</p>';
+  return `<ul class="stk-taken">${rij.map(r => `<li><strong>${esc(r.t)}</strong>${r.s ? " · " + esc(r.s) : ""}${r.n.trim() ? " · " + esc(pvGetal(r.n)) + "× per jaar" : ""}</li>`).join("")}</ul>`;
+}
+function stkTakenUpdate() {
+  document.querySelectorAll("[data-stk-taken]").forEach(c => { c.innerHTML = stkTakenHtml(); });
+}
+
 /* ---------- Extra bouwstenen uit de protocolbouwer (workshop 2 en 3) ---------- */
 const LW = {
   "widget-contactmomenten": { item: "Contactmoment", knop: "Contactmoment toevoegen", velden: [
@@ -1226,6 +1315,7 @@ const LW = {
 function widgetSoort(id) {
   if (id.startsWith("widget-balans")) return { attr: "bal", bouw: balBuild };
   if (id.startsWith("widget-indicatoren")) return { attr: "ind", bouw: indBuild };
+  if (id === "widget-taken") return { attr: "tk", bouw: tkBuild };
   if (id === "widget-voorblad") return { attr: "vb", bouw: vbBuild };
   if (id === "widget-steekkaart") return { attr: "stk", bouw: stkBuild };
   if (LW[id]) return { attr: "lw", bouw: lwBuild };
@@ -1331,7 +1421,9 @@ function stkBuild(id) {
   const box = document.querySelector(`[data-stk="${id}"]`);
   if (!box) return;
   const st = stkLees(id);
-  box.innerHTML = `
+  const takenRef = document.getElementById("wb-widget-taken")
+    ? `<details class="stk-ref" open><summary>Jullie takenlijst als houvast</summary><div data-stk-taken>${stkTakenHtml()}</div></details>` : "";
+  box.innerHTML = `${takenRef}
     <table class="lw-tab"><thead><tr><th>Naam contactmoment</th><th>Uitvoerder</th><th><span class="sr-only">Verwijderen</span></th></tr></thead><tbody>
     ${st.kol.map((c, i) => `<tr>
       <td><input type="text" data-stk-k="${i}.l" value="${esc(c.l)}" placeholder="bv. Intake"></td>
@@ -1835,6 +1927,7 @@ function wbFill(data, opts) {
       ? "Laatst aangepast" + (r.door ? " door " + r.door : "") + " op " + wbDatum(r.bijgewerkt_op)
       : "Nog niet ingevuld";
   });
+  stkTakenUpdate();
 }
 
 async function wbLoad(opts) {
@@ -2097,7 +2190,6 @@ function renderDossier(p, topicId) {
           </ul>
         </nav>
       </aside>
-      ${topic.ws ? pvPanelHtml() : ""}
       <main class="main">
         <div class="main-inner ${topic.id === 'team' || topic.ws ? 'wide' : ''}">
           ${topic.ws ? '<button type="button" class="btn secondary pv-toggle" data-pv-act="toggle">Voorbeeld van het protocol tonen of verbergen</button>' : ""}
@@ -2105,6 +2197,7 @@ function renderDossier(p, topicId) {
           ${RENDERERS[topic.id](p)}
         </div>
       </main>
+      ${topic.ws ? pvPanelHtml() : ""}
     </div>`;
   window.scrollTo(0, 0);
   if (topic.ws) initWerkblad(p, topic.ws);
@@ -2150,6 +2243,8 @@ document.addEventListener("click", e => {
     if (doel && doel.scrollIntoView) doel.scrollIntoView({ behavior: "smooth", block: "start" });
     return;
   }
+  const tkEl = el.closest("[data-tk-act]");
+  if (tkEl) { tkActie(tkEl); return; }
   const lwEl = el.closest("[data-lw-act]");
   if (lwEl) { lwActie(lwEl); return; }
   const stkEl = el.closest("[data-stk-act]");
@@ -2192,6 +2287,7 @@ document.addEventListener("input", e => {
   if (e.target.dataset && (e.target.dataset.balF !== undefined || e.target.dataset.balR !== undefined)) balInput(e.target);
   if (e.target.dataset && e.target.dataset.indR !== undefined) indInput(e.target);
   if (e.target.dataset && e.target.dataset.lwR !== undefined) lwInput(e.target);
+  if (e.target.dataset && e.target.dataset.tkR !== undefined) tkInput(e.target);
   if (e.target.dataset && e.target.dataset.vbF !== undefined) vbInput(e.target);
   if (e.target.dataset && (e.target.dataset.stkK !== undefined || e.target.dataset.stkC !== undefined)) stkInput(e.target);
   if (e.target.closest && e.target.closest("#wb-root")) pvSchedule();
